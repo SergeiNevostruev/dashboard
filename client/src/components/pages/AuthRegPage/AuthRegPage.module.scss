@@ -1,0 +1,42 @@
+@import '../../../assets/style/vars.scss';
+
+.card {
+    width: 100%;
+    max-width: 364px;
+    background-color: $sub-color;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    & > p {
+        color: $text-subcolor;
+        line-height: 24px;
+    }
+    & > h1 {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 24px;
+    }
+    & > .cardtoogle {
+        margin-top: 14px;
+        margin-bottom: 24px;
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        & > span {
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            font-size: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid $color-border;
+            text-align: center;
+        }
+        & > .active {
+            color: #3A95FF;
+            border-bottom: 2px solid #3A95FF;
+        }
+
+    }
+}

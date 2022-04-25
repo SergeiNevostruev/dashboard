@@ -1,0 +1,60 @@
+@import '../../../assets/style/vars.scss';
+
+.card {
+    width: 100%;
+    max-width: 364px;
+    background-color: $sub-color;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & > h1 {
+        font-size: 18px;
+    }
+    & > .steps {
+        margin-top: 16px;
+        display: flex;
+        width: 100%;
+        color: $color-border;
+        margin-bottom: 24px;
+        & > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid $color-border;
+            padding-bottom: 16px;
+        }
+    }
+}
+
+
+.number {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid $color-border;
+    margin-right: 24px;
+    
+}
+
+.active {
+    color: #3A95FF;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #3A95FF;
+}
+
+.activenumber {
+    border: 1px solid #3A95FF;
+}
+
+.link {
+    color: #3A95FF;
+}
+
+.consent {
+    margin-top: 16px;
+    font-size: 12px;
+}

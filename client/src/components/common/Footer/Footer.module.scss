@@ -1,0 +1,33 @@
+@import '../../../assets/style/vars.scss';
+
+.footer {
+  grid-area: footer;
+  background-color: $footer-color;
+  color: $text-footer-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 10px; 
+  & > .logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    height: 32px;
+    & > .border {
+      height: 32px;
+      border-left: 2px solid $text-footer-color;
+    }
+    & > a {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.container {
+  max-width: $container;
+  justify-content: space-between;
+}

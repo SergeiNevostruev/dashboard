@@ -1,0 +1,39 @@
+@import '../../../assets/style/vars.scss';
+.header {
+  grid-area: header;
+  background-color: $sub-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 10px;  
+  & > ul {
+    width: 400px;
+    display: flex;
+    list-style: none;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .user_info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & > button {
+      margin-top: 0;
+      margin-left: 30px;
+    }
+  }
+}
+
+.active_link {
+  color: green;
+}
+.not_active_link {
+  color: red;
+}
+
+.container {
+
+  max-width: $container;
+  justify-content: space-between;
+}

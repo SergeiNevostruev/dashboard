@@ -1,0 +1,12 @@
+@import '../../../../assets/style/vars.scss';
+
+.social {
+    width: 144px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.social svg:hover g > path {
+    filter: drop-shadow(0 0 2px rgba(39, 108, 129, 0.5));
+    transform: scale(0.9,0.9);
+}

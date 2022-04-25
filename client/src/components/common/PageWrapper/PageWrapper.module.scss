@@ -1,0 +1,31 @@
+@import '../../../assets/style/vars.scss';
+
+.page_wrapper {
+  box-sizing: border-box;
+  width: 100vw;
+  min-height: 100vh;
+  display: grid;
+  grid-template-areas:
+    'header'
+    'content'
+    'footer';
+  grid-template-rows: 72px auto 120px;
+}
+
+.content {
+  background-color: $main-color;
+  display: flex;
+  flex-direction: column;
+  // padding: 40px 0;
+  align-items: center;
+  // justify-content: center;
+}
+
+.container {
+  max-width: $container;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+}

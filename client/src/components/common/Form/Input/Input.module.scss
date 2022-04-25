@@ -1,0 +1,52 @@
+@import '../../../../assets/style/vars.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  // height: 100px;
+  width: 100%;
+  margin-bottom: 14px;
+  position: relative;
+
+  & > span {
+    font-family: $text;
+    font-size: $text-size;
+    line-height: 30px;
+    pointer-events: none;
+    position: absolute;
+    transition: all 200ms;
+    top: 16%;
+    left: 10px;
+  }
+
+  & > input {
+    font-size: $text-size;
+    background-color: $main-color;
+    border-radius: 3px;
+    border: 1px solid $color-input-border;
+    -webkit-appearance: none;
+    outline: none;
+    vertical-align: middle;
+    height: 42px;
+    padding: 8px;
+  }
+  & > input::placeholder {
+    font-size: $text-size;
+    line-height: 30px;
+
+  }
+  & > input:focus {
+    border: 2px solid $button-color-blue;
+  }
+}
+
+
+.wrapper input:focus ~ .label,
+.wrapper input:not(:placeholder-shown) ~ .label{
+  // width: 500px;
+  font-size: 10px;
+  color: $color-border;
+  top: -10%;
+  left: 10px;
+}
