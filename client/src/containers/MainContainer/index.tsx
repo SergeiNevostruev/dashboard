@@ -5,13 +5,14 @@ import { GetUsersAction } from '../../store/users/actions';
 import getUsers from '../../store/users/selectors';
 
 const MainContainer = () => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(GetUsersAction());
-  }, []);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(GetUsersAction());
+  // }, []);
 
-  const userData = useSelector(getUsers);
-  return <MainPage userData={userData} />;
+  // const userData = useSelector(getUsers);
+  // return <MainPage userData={userData} />;
+  return <MainPage />;
 };
 
 export default MainContainer;

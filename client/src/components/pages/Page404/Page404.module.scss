@@ -1,0 +1,13 @@
+@import '../../../assets/style/vars.scss';
+
+.page404 {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    & > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 144px;
+    }
+}

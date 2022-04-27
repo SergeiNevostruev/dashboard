@@ -1,0 +1,38 @@
+@import '../../../../assets/style/vars.scss';
+
+
+.tegs {
+    // max-width: $container;
+    padding-top: 20px;
+    display: flex;
+    justify-self: start;
+    flex-wrap: wrap;
+    width: 100%;
+    // margin-left: 20px;
+    & > button {
+        margin-right: 20px;
+        margin-bottom: 10px;
+    }
+}
+
+.button {
+    cursor: pointer;
+    border: none;
+    border-radius: 35px;
+    text-align: center;
+    font-family: $text;
+    font-size: $text-size;
+    height: 40px;
+    width: auto;
+    background-color: inherit;
+    color: $text-color;
+}
+
+.button_orange {
+    background-color: $button-color-orange;
+}
+
+.button_active {
+    border: 1px solid $button-color-blue;
+    color: $button-color-blue;
+}

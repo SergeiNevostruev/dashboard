@@ -1,7 +1,9 @@
 @import '../../../assets/style/vars.scss';
 
 .card {
+    margin: 40px 0;
     width: 100%;
+    max-width: $container;
     max-width: 364px;
     background-color: $sub-color;
     padding: 24px;
@@ -9,6 +11,7 @@
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
+
     & > p {
         color: $text-subcolor;
         line-height: 24px;
