@@ -1,5 +1,6 @@
 @import 'mormalize';
 @import 'vars';
+@import "~react-image-gallery/styles/scss/image-gallery.scss";
 
 body {
   color: $text-color;
@@ -39,3 +40,27 @@ a {
 // .active {
 //   color: green;
 // }
+
+
+// Переопределение стилей слайдера
+.image-gallery-thumbnails-container, .image-gallery-thumbnails-wrapper, .image-gallery-thumbnails {
+  width: 100%  !important;
+  display: flex  !important;
+  justify-content: space-between  !important;
+}
+
+.image-gallery-image {
+  width: 100%!important;
+  height: 328px!important;
+  object-fit: contain !important;
+}
+
+.image-gallery-thumbnail-image, .image-gallery-thumbnail, .image-gallery-thumbnail-inner {
+  width: 100%  !important;
+  max-width: 160px !important;
+}
+
+// переопределение стиля карты
+.ymaps-2-1-79-map {
+  width: 100% !important;
+}

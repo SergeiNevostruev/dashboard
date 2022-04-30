@@ -1,0 +1,17 @@
+@import '../../../assets/style/vars.scss';
+
+
+.eye {
+    
+    display: inline-flex;
+    align-items: center;
+    & > svg > path {
+        stroke: rgba(44, 45, 46, 0.4);
+    }
+
+    span {
+        padding-left: 10px;
+        color: rgba(44, 45, 46, 0.4);
+    }
+
+}

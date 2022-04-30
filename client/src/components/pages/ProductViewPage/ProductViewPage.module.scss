@@ -1,0 +1,98 @@
+@import '../../../assets/style/vars.scss';
+
+// стили слайдера переопределены в main.scss
+// .slider{
+    // max-width: 450px;
+    // height: 500px;
+
+    
+// }
+
+.container {
+    max-width: $container;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: auto minmax(200px, 300px);
+    grid-template-rows: auto;
+    gap: 20px 102px;
+    & > .date {
+        background-color:  $color-input-border;
+        display: inline;
+        padding: 8px 24px;
+        width: fit-content;
+        font-size: 16px;
+    }
+    & > .price, .title {
+        font-size: 24px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    & > .tel {
+        display: inline-flex;
+        align-items: center;
+        color: $button-color-blue;
+        text-decoration: underline;
+        height: 36px;
+    }
+
+    & > .idProduct {
+        font-size: 18px;
+    }
+
+    & > .viewtoo {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+}
+
+.rec_product {
+    width: 100%;
+    max-width: 500px;
+    font-size: 16px;
+    & > img {
+        margin-bottom: 24px;
+        box-sizing: border-box;
+        object-fit: contain;
+        width: 100%;
+    }
+    
+    & > p {
+        margin-bottom: 12px;
+    }
+    & > h4 {
+        font-weight: bold;
+    }
+}
+
+.description {
+    margin: 32px 0;
+    & > h3 {
+        margin-top: 32px;
+        font-size: 16px;
+    }
+    & > p {
+        margin-top: 24px;
+        font-size: 16px;
+    }
+}
+
+.location {
+    & > h3 {
+        margin: 32px 0;
+        font-size: 16px;
+        & > span {
+            font-weight: 400;
+        }
+    }
+}
+
+.map {
+    width: 100%;
+    height: 325px;
+    margin-bottom: 20px;
+}
+
