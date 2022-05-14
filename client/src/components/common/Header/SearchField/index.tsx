@@ -1,10 +1,16 @@
-import { FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import style from './SearchField.module.scss';
 
 const SearchField = () => {
-  console.log('lsdaf');
+  const navigate = useNavigate();
+  const [value, setValue] = useState('');
+  const handler = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    navigate('/search', { state: value });
     console.log('искать');
   };
 
@@ -32,7 +38,7 @@ const SearchField = () => {
         />
       </svg>
       <form action="submit" onSubmit={handleSubmit}>
-        <input type="search" name="search" />
+        <input type="search" name="search" value={value} onChange={handler} />
         <button type="submit">Искать</button>
       </form>
     </div>

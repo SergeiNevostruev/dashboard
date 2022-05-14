@@ -41,7 +41,9 @@ const ProductViewPage = ({ page, images, productInfo, searchProduct }: ProductVi
       ) : (
         <p className={style.tel}>{productInfo?.tel}</p>
       )}
-      <p className={style.idProduct}>{productInfo?.idProduct}</p>
+      <p className={style.idProduct}>
+        {`id: ${page}, productInfo:`} {productInfo?.idProduct}
+      </p>
       <div></div>
       <Eye viewscount={productInfo?.viewscount || 0} />
       <p className={style.viewtoo}>Смотрите также:</p>

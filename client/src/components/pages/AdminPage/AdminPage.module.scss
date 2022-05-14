@@ -1,0 +1,152 @@
+@import '../../../assets/style/vars.scss';
+
+.container {
+    width: 100%;
+    max-width: $container;
+    margin: 40px 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    & > h1 {
+        font-size: 24px;
+        color: rgba($color: #2C2D2E, $alpha: .6);
+        margin-bottom: 40px;
+    }
+}
+
+.left_menu {
+    margin-top: 12px;
+    max-width: 267px;
+    width: 100%;
+    border-radius: 3px;
+    background-color: $sub-color;
+    margin-right: 40px;
+}
+
+.main_section {
+    width: 100%;
+    // background-color: $sub-color;
+}
+
+.main_section_title {
+    margin-top: 5px;
+}
+
+.profile {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    & > svg {
+        margin-right: 24px;
+    }
+}
+
+.profile:last-child{
+    border-radius: 0 0 3px 3px;
+}
+
+.profile:first-child{
+    border-radius: 3px 3px 0 0;
+}
+
+.profile:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: 50ms;
+}
+
+
+
+.border {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+    border: 1px solid E5E5E5;
+    margin-right: 16px;
+    width: 36px;
+    height: 36px;
+    // border-radius: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #E5E5E5;
+}
+
+.sub_text {
+    margin-top: 5px;
+    color: rgba($color: #2C2D2E, $alpha: .6);
+    font-size: 12px;
+}
+
+.main_section_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & > span {
+        margin-right: 10px;
+    }
+}
+
+.main_section_header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.main_section_search_panel {
+    margin-top: 24px;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter {
+    height: 40px;
+    padding: 0 20px;
+    margin-left: 10px;
+    // width: 100%;
+    // max-width: 153px;
+    background-color: rgba(42, 47, 55, 0.08);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    cursor: pointer;
+    transition: 200ms;
+    span {
+        margin-right: 20px;
+    }
+}
+
+.filter:hover {
+    background-color: rgba(42, 47, 55, 0.18);
+}
+
+.filter:active {
+    background-color: rgba(35, 73, 135, 0.18);
+}
+
+
+
+
+.main_section_search {
+    width: 100%;    
+    input, button {
+        height: 40px;
+    }
+    input {
+        height: 30px;
+    }
+}
+
+.main_section_search_panel_filter {
+    display: flex;
+    width: 70%;
+}
+
+.main_section_search_panel_pang {
+    // width: inherit;
+    // display: flex;
+}

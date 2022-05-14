@@ -62,3 +62,12 @@
     justify-content: center;
     background-color: #E5E5E5;
 }
+
+.background_click {
+    width: 100vw;
+    height: 100vh;
+    z-index: 400;
+    position: fixed;
+    top: 0;
+    right: 0;
+}

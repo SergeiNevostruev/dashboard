@@ -1,0 +1,38 @@
+@import '../../../assets/style/vars.scss';
+
+.container {
+    width: 100%;
+    max-width: $container;
+    margin: 40px 0;
+    padding: 0 20px;
+    & > h1 {
+        font-size: 24px;
+        color: rgba($color: #2C2D2E, $alpha: .6);
+        margin-bottom: 40px;
+    }
+}
+
+.product {
+    margin-top: 40px;
+    max-width: 767px;
+    h3 {
+        font-size: 18px;
+        margin-bottom: 24px;
+    }
+    p {
+        font-size: 16px;
+        margin-bottom: 24px;
+        line-height: 24px;
+    }
+    span {
+        font-size: 16px;
+        color: rgba($color: #2C2D2E, $alpha: .6);
+    }
+}
+
+.pangination_section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}

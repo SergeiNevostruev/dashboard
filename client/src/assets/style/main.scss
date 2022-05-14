@@ -1,6 +1,12 @@
 @import 'mormalize';
 @import 'vars';
 @import "~react-image-gallery/styles/scss/image-gallery.scss";
+// @import 'antd/dist/antd.css';
+@import 'antd/es/pagination/style';
+@import 'antd/es/input/style';
+@import 'antd/es/button/style';
+@import 'antd/es/select/style';
+@import 'antd/es/empty/style';
 
 body {
   color: $text-color;
