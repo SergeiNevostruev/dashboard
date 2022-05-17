@@ -26,6 +26,8 @@ const App = () => {
         <Route path="reg" element={<RegistrationContainer />} />
         <Route path="recoverypass" element={<RecoveryPassContainer />} />
         <Route path="admin" element={<AdminContainer />} />
+        <Route path="admin/edit/:id" element={<AdminContainer />} />
+        {/* <Route path="admin/edit/new" element={<AdminContainer />} /> */}
         <Route path="ads" element={<h1>Мои объявления</h1>} />
         <Route path="profile" element={<h1>Профиль</h1>} />
         <Route path="cardproduct/:id" element={<ProductViewContainer />} />

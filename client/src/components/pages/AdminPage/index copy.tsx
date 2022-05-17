@@ -1,4 +1,4 @@
-import { Link, Navigate, useHref, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useHref, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import style from './AdminPage.module.scss';
 import { Pagination } from 'antd'; // стили для пангинации из ант библиотеки импортированы в main.css
@@ -11,8 +11,6 @@ import { useEffect } from 'react';
 import { Input, Space } from 'antd';
 import Filter from './Filter';
 import TableAds, { TablePropType } from './TableAbs';
-import AdminAllAbs from './AdminAllAbs';
-import Abs from './Abs';
 
 const { Search } = Input;
 
@@ -40,9 +38,6 @@ const AdminPage = ({
   // const { state } = useLocation();
   // const location = useLocation();
   // location.pathname = `/cardprod
-  const param = useParams();
-  console.log('params: ', !!param.id);
-
   const href = useHref('/admin/edit/new');
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,7 +76,41 @@ const AdminPage = ({
           <p>Выход</p>
         </div>
       </aside>
-      {!param.id ? <AdminAllAbs count={count} data={data} /> : <Abs id={param.id} />}
+      <section className={style.main_section}>
+        <div className={style.main_section_header}>
+          <div>
+            <h1 className={style.main_section_title}>Объявления</h1>
+            <p className={style.sub_text}>Всего: {count}</p>
+          </div>
+          <Button
+            onClick={() => {
+              console.log('добавить объявление');
+              navigate(href);
+            }}
+            size="m"
+            className={style.main_section_button}>
+            <span>Добавить </span>
+            <PlusIcon />
+          </Button>
+        </div>
+        <div className={style.main_section_search_panel}>
+          <div className={style.main_section_search_panel_filter}>
+            <Space direction="vertical" className={style.main_section_search}>
+              <Search
+                placeholder="Найти объявление"
+                allowClear
+                onSearch={onSearch}
+                style={{ maxWidth: 415, width: '100%', height: '40px' }}
+              />
+            </Space>
+            <Filter />
+          </div>
+          <div className={style.main_section_search_panel_pang}>
+            <Pagination simple size="small" total={50} />
+          </div>
+        </div>
+        <TableAds data={data.data} />
+      </section>
     </div>
   );
 };
