@@ -1,0 +1,109 @@
+@import '../../../assets/style/vars.scss';
+
+.main_form {
+    background-color: $sub-color;
+    margin-top: 19px;
+    padding: 37px 24px 0px 24px;
+
+}
+
+.name_save_block_bgn {
+    background-color: $main-color;
+}
+
+.name_save_block{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    background-color: $sub-color;
+    padding: 0 24px;
+    & > h1 {
+        font-size: 14px;
+    }
+    & > button {
+        border-radius: 4px;
+        width: 100%;
+        min-width: 100px;  
+        height: 36px;
+        max-width: 180px;
+    }
+}
+
+
+$empty: 3%;
+
+.form_group {
+    display: flex;
+    // justify-content: space-between;
+    align-items: center;
+    .form_group_item {
+        width: 50%;
+    }
+    .form_group_item_empty {
+        width: $empty;
+    }
+}
+
+.form_tel {
+    max-width: 398px;
+}
+
+.form_file_input_wrap {
+    padding: 12px 24px;
+    background-color: $main-color;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+}
+
+.form_about {
+    min-height: 128px;
+}
+
+.map {
+    background-color: $sub-color;
+    width: 100%;
+    padding: 12px 24px 152px 24px;
+    height: calc(325px + 152px);
+    margin-bottom: 20px;
+}
+
+.form_locality {
+    margin-bottom: 0;
+}
+
+:global(.ant-upload-span) {
+    display: flex;
+    margin: 5px;
+}
+
+:global(.ant-upload-list) {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+//переопределение стилей анта
+:global(.ant-input) {
+    background-color: $main-color;
+    height: 64px;
+    font-size: 16px;
+}
+
+:global(.ant-col-16) {
+    max-width: 100%;
+}
+
+// скрытие селекта
+:global(.ant-slide-up-leave) {
+    display: none;
+}
+
+:global(.ant-select-selector) {
+    background-color: $main-color!important;
+    height: 64px!important;
+}
+
+:global(.ant-select-selection-item) {
+    display: inline-flex;
+    align-items: center;
+}

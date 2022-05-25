@@ -224,3 +224,13 @@
     }
 
 }
+
+.back_button {
+    display: flex;
+    align-items: center;
+    span {
+        margin-left: 5px;
+    }
+    padding: 5px 5px 5px 0;
+    cursor: pointer;
+}

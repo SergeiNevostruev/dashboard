@@ -60,3 +60,4 @@ const Tegs = ({ tegs, onClick }: TegsPropType) => {
 };
 
 export default Tegs;
+export { type TegsPropType };

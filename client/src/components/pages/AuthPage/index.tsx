@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { SetUserNameAction } from '../../../store/auth/actions';
+import { SetUserNameAction } from '../../../toolkit/auth';
 import Button from '../../common/Button';
 import Form from '../../common/Form';
 import Input from '../../common/Form/Input';
