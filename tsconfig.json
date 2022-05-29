@@ -4,13 +4,32 @@
         "es5",
         "es6"
      ],
+     "resolveJsonModule": true,
+     "allowSyntheticDefaultImports": true,
      "target": "es5",
      "module": "commonjs",
      "moduleResolution": "node",
      "outDir": "./build",
+     "rootDir": "./server",
+     "alwaysStrict": false, 
+     "checkJs": false,
+     "strict": false, 
+     "removeComments": true,
      "esModuleInterop": true,
      "emitDecoratorMetadata": true,
      "experimentalDecorators": true,
      "sourceMap": true
-  }
+  },
+  "exclude": [
+    // Секция "exclude" позволяет исключить при компиляции определенные файлы, которые находятся в заданных папках секции "include" или в папках всего проекта, если секция "include" не задана.
+    // Компилятор не будет учитывать перечисленные в секции "exclude" файлы TypeScript, которые находятся в папках из секции "include".
+    // Однако файлы, заданные в секции "files" будут обязательно скомпилированы.
+    // Если секция "exclude" не указана, то по умолчанию будут исключаться из компиляции все файлы из папок:
+    // - node_modules,
+    // - bower_components,
+    // - jspm_packages,
+    // - файлы из папки, указанной в опции компилятора "outDir".
+    "client",
+    "node_modules"
+  ]
 }
