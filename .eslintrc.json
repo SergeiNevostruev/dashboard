@@ -6,9 +6,9 @@
   "extends": ["plugin:react/recommended", "airbnb"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
+    // "ecmaFeatures": {
+    //   "jsx": true
+    // },
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
@@ -23,21 +23,21 @@
   "rules": {
     "import/no-unresolved": "off",
     "import/extensions": "off",
-    "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
+    // "react/jsx-filename-extension": ["error", { "extensions": [".ts", ".tsx"] }],
     "comma-dangle": "off",
-    "react/jsx-closing-bracket-location": "off",
-    "react/function-component-definition": [
-      "warn",
-      {
-        "namedComponents": "arrow-function",
-        "unnamedComponents": "arrow-function"
-      }
-    ],
-    "react/no-unused-prop-types": "warn",
+    // "react/jsx-closing-bracket-location": "off",
+    // "react/function-component-definition": [
+    //   "warn",
+    //   {
+    //     "namedComponents": "arrow-function",
+    //     "unnamedComponents": "arrow-function"
+    //   }
+    // ],
+    // "react/no-unused-prop-types": "warn",
     "no-unused-vars": "warn",
-    "react/require-default-props": "off",
+    // "react/require-default-props": "off",
     "object-curly-newline": "off",
-    "react/jsx-wrap-multilines": "off",
+    // "react/jsx-wrap-multilines": "off",
     "default-param-last": "off",
     "linebreak-style": "off"
   }
