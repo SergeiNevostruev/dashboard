@@ -2,25 +2,28 @@ import 'reflect-metadata';
 import { createConnection, DataSource } from 'typeorm';
 import 'colors';
 import { get } from 'node-emoji';
+import path from 'path';
+import { User } from './entity/User';
+import { Product } from './entity/Product';
 
 const db = new DataSource(
   {
     type: 'postgres',
-    host: 'postgres',
+    host: '0.0.0.0', // если разбито на контейнеры, то доступ по имени контейнера, если приложение снаружи, а база в контейнере, то через 0.0.0.0, если просто установлена, то локал хост
     port: 5432,
     username: 'postgres',
     password: 'postgres',
     database: 'postgres',
     synchronize: true,
     logging: false,
-    entities: [
-      'entity/*.ts'
+    entities: [User, Product,
+      path.join(__dirname, 'entity/*.ts')
     ],
     migrations: [
-      'migration/*.ts'
+      path.join(__dirname, 'migration/*.ts')
     ],
     subscribers: [
-      'subscriber/*.ts'
+      path.join(__dirname, 'subscriber/*.ts')
     ],
   }
 );

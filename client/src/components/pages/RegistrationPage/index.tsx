@@ -1,10 +1,14 @@
+import { message } from 'antd';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import PostRequest from '../../../network';
 import Button from '../../common/Button';
 import Form from '../../common/Form';
 import Checkbox from '../../common/Form/Checkbox';
 import Input from '../../common/Form/Input';
 import style from './RegistrationPage.module.scss';
+
+type responseRegType = { e: boolean; message: string };
 
 const RegistrationPage = () => {
   const [name, setName] = useState('');
@@ -13,6 +17,25 @@ const RegistrationPage = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [consent, setConsent] = useState(false);
+
+  const regHandler = async () => {
+    console.log('регистрация');
+    const response: responseRegType = await PostRequest({
+      // url: '/api/users',
+      url: '/api/newuser',
+      method: 'POST',
+      data: {
+        firstName: name,
+        lastName: surname,
+        email,
+        password,
+        rpassword: repeatPassword,
+        consent,
+      },
+    });
+    response.e ? message.warning(response.message) : message.success(response.message);
+    // setRes(response);
+  };
 
   return (
     <Form title="Регистрация">
@@ -39,7 +62,7 @@ const RegistrationPage = () => {
         value={repeatPassword}
         setValue={setRepeatPassword}
       />
-      <Button title="Регистрация" onClick={() => console.log('registration')} size="x" />
+      <Button title="Регистрация" onClick={regHandler} size="x" />
       <Checkbox value={consent} setValue={setConsent} className={style.consent}>
         <p>
           Принимаю условия{' '}

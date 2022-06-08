@@ -24,7 +24,7 @@ services:
 
   db:
     image: postgres:14.1-alpine
-    container_name: 'postgres'
+    container_name: 'postgres1'
     restart: always
     # restart: on-failure
     environment:

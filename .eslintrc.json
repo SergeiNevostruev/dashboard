@@ -39,6 +39,8 @@
     "object-curly-newline": "off",
     // "react/jsx-wrap-multilines": "off",
     "default-param-last": "off",
-    "linebreak-style": "off"
+    "linebreak-style": "off",
+    "no-shadow":"off",
+    "import/prefer-default-export": "off"
   }
 }

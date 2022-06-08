@@ -3,6 +3,7 @@ import * as Hapi from '@hapi/hapi';
 import * as HapiSwagger from 'hapi-swagger';
 import * as Inert from '@hapi/inert';
 import * as Vision from '@hapi/vision';
+import * as jwt from '@hapi/jwt';
 
 // options swagger
 // =====================================================================================
@@ -12,7 +13,7 @@ const swaggerOptions: HapiSwagger.RegisterOptions = {
   }
 };
 
-const swagger: Array<Hapi.ServerRegisterPluginObject<any>> = [
+const plugins: Array<Hapi.ServerRegisterPluginObject<any>> = [
   {
     plugin: Inert
   },
@@ -22,7 +23,8 @@ const swagger: Array<Hapi.ServerRegisterPluginObject<any>> = [
   {
     plugin: HapiSwagger,
     options: swaggerOptions
-  }
+  },
+  jwt
 ];
 
-export default swagger;
+export default plugins;
