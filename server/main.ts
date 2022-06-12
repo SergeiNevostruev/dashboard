@@ -2,6 +2,7 @@ import 'colors';
 import { get } from 'node-emoji';
 import path from 'path';
 import fs from 'fs';
+import { Driver } from 'typeorm';
 import config from './config/config.json';
 import db from './db';
 import init from './lib/server';
@@ -15,7 +16,6 @@ fs.access(path.join(config.fotofolder), (err) => {
   }
 });
 
-// база данных
 db.initialize()
   .then(() => {
     console.log(get('book'), get('traffic_light'), 'Соединение с базой данных установлено'.yellow);

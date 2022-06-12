@@ -9,6 +9,27 @@ const productRoute: Hapi.ServerRoute[] = [
     path: '/api/products',
     options: {
       handler: handlers.products,
+      description: 'Get products of database',
+      notes: 'Returns array with users',
+      tags: ['api'],
+      validate: {
+        options: {
+          allowUnknown: true
+        },
+        query: Joi.object({
+          page: Joi.string().regex(/\d/),
+          tegs: Joi.string(),
+          count: Joi.string().regex(/\d/),
+        })
+      }
+    }
+  },
+
+  {
+    method: 'GET',
+    path: '/api/tegsdefoults',
+    options: {
+      handler: handlers.tegsdefoults,
       description: 'Get users of database',
       notes: 'Returns array with users',
       tags: ['api'],
@@ -89,6 +110,18 @@ const productRoute: Hapi.ServerRoute[] = [
     path: '/api/product/{uuid}',
     options: {
       auth: { strategies: ['auth'], scope: ['user', 'admin'] },
+      payload: {
+        maxBytes: 1024 * 1024 * 5,
+        multipart: {
+          output: 'stream'
+        },
+        parse: true
+      },
+      plugins: {
+        'hapi-swagger': {
+          payloadType: 'form'
+        }
+      },
       handler: handlers.putProduct,
       description: 'Change product',
       notes: 'Returns changed product',

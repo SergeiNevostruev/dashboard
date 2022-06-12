@@ -2,7 +2,7 @@ import * as Jwt from '@hapi/jwt';
 import * as Hapi from '@hapi/hapi';
 import db from '../db';
 import { User, UserRole } from '../entity/User';
-import userController from './userController';
+import { validPassword } from './helpers';
 import config from '../config/config.json';
 
 type UserType = {
@@ -14,7 +14,7 @@ const auth = async (request: Hapi.Request, reply: Hapi.ResponseApplicationState)
   const user = request.payload as UserType;
   const dbuser = await db.manager.findOneBy(User, { email: user.email });
   if (!dbuser) return { e: true, message: 'Некорректные данные о пользователе' };
-  const checkUser = userController.validPassword(user.password, dbuser.salt, dbuser.hashpassword);
+  const checkUser = validPassword(user.password, dbuser.salt, dbuser.hashpassword);
   if (!checkUser) return { e: true, message: 'Некорректные данные о пользователе' };
   let scope: 'admin' | 'user' = 'user';
   if (dbuser.role === 'admin') scope = 'admin';

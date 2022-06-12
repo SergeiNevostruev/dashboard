@@ -2,19 +2,22 @@ import * as Hapi from '@hapi/hapi';
 import crypto from 'crypto';
 import axios, { AxiosResponse } from 'axios';
 import fs from 'fs';
-import { access, mkdir } from 'fs/promises';
+import { access, mkdir, rm } from 'fs/promises';
 import path from 'path';
-import Joi from 'joi';
+import Joi, { object, string } from 'joi';
 import Boom from '@hapi/boom';
+import moment from 'moment-timezone';
 import { User } from '../entity/User';
 import db from '../db';
 import { Product } from '../entity/Product';
 import config from '../config/config.json';
+import { writePhotoFile } from './helpers';
+import { Tegs } from '../entity/Tegs';
 
 const { constants } = fs;
 
 type NewProductType = {
-    userUuid: string;
+    // userUuid: string;
     title: string;
     tel: number;
     teg: number;
@@ -24,11 +27,13 @@ type NewProductType = {
     mapXY: {x: number, y: number};
     file: any
 }
+
 //  ==========================================================================
 //  ==========================================================================
 //  =============>> Здесь должен быть запрос координат <<=====================
 //  ==========================================================================
 //  ==========================================================================
+
 const getMapXY = async (addres: string): Promise<NewProductType['mapXY']> => {
   console.log('получение координат ', addres);
   // const queryParams = `? geocode=${addres} & apikey=${config.mapkey} & format=json`;
@@ -37,15 +42,76 @@ const getMapXY = async (addres: string): Promise<NewProductType['mapXY']> => {
   return { x: 51, y: 52 };
 };
 
-const products: any = async () => {
-  console.log('поиск объявлений');
+// const products: any = async () => {
+//   console.log('поиск объявлений');
+//   try {
+//     const data = await db.manager.find(Product);
+//     // console.log(data);
+//     return data;
+//   } catch (e) {
+//     console.log('ошибка ', e);
+//     return { error: JSON.stringify(e) };
+//   }
+// };
+
+const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) => {
+  const countPage = await db.getRepository(Product).count();
+  // парсинг квери запросов query = {page, tegs, count}
+  const pageQuery = (Number(request.query.page) || 1) - 1;
+  const countProductOnPage = Number(request.query.count) || 3;
+  const productNumberPang = (countPage > countProductOnPage * pageQuery || countPage <= 0)
+    ? pageQuery * countProductOnPage : countPage - countProductOnPage;
+
+  let changeNaNtegs: boolean = false;
+  // const tegstr = '1,2,3,4,5';
+  const tegsQuery = request.query.tegs;
+  const tegsDB = await db.manager.find(Tegs).catch();
+  if (!tegsDB) return Boom.internal('Теги не найдены');
+  const tegs = tegsQuery?.split(',').map((el: string) => {
+    if (changeNaNtegs) return 0;
+    if (Number.isNaN(Number(el))) {
+      changeNaNtegs = true;
+      return 0;
+    }
+    return Number(el);
+  }) || tegsDB.map((i) => i.id);
+  // const tegs = [1];
+  if (Number.isNaN(countProductOnPage) || changeNaNtegs) return Boom.notFound('Неверный запрос');
+
   try {
-    const data = await db.manager.find(Product);
-    // console.log(data);
-    return data;
+    const data = await db
+      .getRepository(Product)
+      .createQueryBuilder()
+      .select([
+        'product.id',
+        'product.title',
+        'product.tel',
+        'product.teg',
+        'product.price',
+        'product.about',
+        'product.photoUrl',
+        'product.address',
+        'product.mapXY',
+        'product.views',
+        'product.tel',
+        'product.userUuid',
+        'product.createDate'])
+      .from(Product, 'product')
+      .where('product.teg IN (:...tegs)', { tegs })
+      .offset(productNumberPang)
+      .limit(countProductOnPage)
+      .distinct(true)
+      .orderBy('product.createDate', 'DESC', 'NULLS LAST')
+      .getMany();
+
+    return data.map((obj) => ({ ...obj,
+      createDate: moment(obj.createDate)
+        .tz('Europe/Moscow', true).format() }));
   } catch (e) {
-    console.log('ошибка ', e);
-    return { error: JSON.stringify(e) };
+    return Boom.internal('Неведома ошибка сервера');
   }
 };
 
@@ -98,7 +164,7 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 
   const product = new Product();
   product.userUuid = userUuid;
-  product.title = tel;
+  product.title = title;
   product.tel = tel;
   product.teg = teg;
   product.price = price;
@@ -118,21 +184,11 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     await mkdir(path.join(config.fotofolder, `${id}`)).catch();
   }
 
-  const changeExp = (fileExp: string): boolean => (!(path.extname(fileExp) === '.jpg') && !(path.extname(fileExp) === '.jpeg'));
-
-  const result = [];
-  const photoPaths = [];
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < file.length; i++) {
-    if (changeExp(file[i].hapi.filename)) return { e: true, message: 'Некорректные расширения фотографий' };
-    result.push(file[i].hapi);
-    const uuidPhoto = crypto.randomUUID();
-    const filePath = path.join(config.fotofolder, `${id}`, uuidPhoto + path.extname(file[i].hapi.filename));
-    photoPaths.push(filePath);
-    file[i].pipe(fs.createWriteStream(filePath));
+  const photoUrlWriteJson = await writePhotoFile('', file, id);
+  if (photoUrlWriteJson.e) {
+    return photoUrlWriteJson;
   }
-
-  product.photoUrl = JSON.stringify(photoPaths);
+  product.photoUrl = photoUrlWriteJson.message;
 
   try {
     await db.manager.save(product);
@@ -149,11 +205,17 @@ const getProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   const { uuid } = request.params as {uuid: string | undefined | null};
 
   if (!uuid) {
+    return Boom.notFound('Неверный URL');
+  }
+  try {
+    const user = await db.manager.findOneBy(Product, { uuid });
+    const { about, address, mapXY, photoUrl, price, teg, tel, title, views } = user;
+    user.views += 1; // ====> простой счетчик просмотров
+    await db.manager.save(user).catch((e) => Boom.internal('Неведомая беда произошла на сервере'));
+    return { about, address, mapXY, photoUrl, price, teg, tel, title, views };
+  } catch (e) {
     return h.view('404').code(404);
   }
-  const user = await db.manager.findOneBy(Product, { uuid });
-  const { about, address, mapXY, photoUrl, price, teg, tel, title } = user;
-  return { about, address, mapXY, photoUrl, price, teg, tel, title };
 };
 
 const delProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
@@ -186,8 +248,99 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   h: Hapi.ResponseToolkit
 ) => {
   console.log(request.params.uuid, '  ', request.auth.credentials.uuid);
+  const {
+    title,
+    tel,
+    teg,
+    price,
+    about,
+    address,
+    mapXY,
+    file
+  } = request.payload as NewProductType;
 
-  return 'PUT';
+  const uuidUrlProduct = request.params.uuid as string;
+  const uuidUserToken = request.auth.credentials.uuid as string;
+
+  if (!uuidUrlProduct) {
+    return Boom.notFound('Такого объявления нет в Вашем аккаунте');
+  }
+
+  const putProduct = await db
+    .manager
+    .findOneBy(Product, { uuid: uuidUrlProduct, userUuid: uuidUserToken }).catch((e) => {
+      Boom.notFound('Такого объявления нет в Вашем аккаунте');
+    });
+
+  if (!putProduct) {
+    return Boom.notFound('Невозможно изменить объявления. Такого объявления нет в Вашем аккаунте');
+  }
+
+  const validForm = schemaMultipart.validate({
+    // userUuid,
+    title,
+    tel,
+    teg,
+    price,
+    about,
+    address
+  });
+  if (validForm.error) return { e: true, message: 'Некорректно заполнена форма' };
+
+  putProduct.title = title;
+  putProduct.tel = tel;
+  putProduct.teg = teg;
+  putProduct.price = price;
+  putProduct.about = about;
+  putProduct.address = address;
+  putProduct.mapXY = mapXY;
+
+  const user = await db.manager.findOneBy(User, { uuid: uuidUserToken });
+
+  if (!user) return { e: true, message: 'Некорректный пользователь' };
+
+  const id = user.uuid;
+
+  try {
+    await access(
+      path.join(config.fotofolder, `${id}`),
+      constants.R_OK || constants.W_OK
+    );
+  } catch {
+    await mkdir(path.join(config.fotofolder, `${id}`)).catch();
+  }
+
+  const photoUrlWriteJson = await writePhotoFile(putProduct.photoUrl, file, id);
+  if (photoUrlWriteJson.e) {
+    return photoUrlWriteJson;
+  }
+  putProduct.photoUrl = photoUrlWriteJson.message;
+
+  try {
+    await db.manager.save(putProduct);
+    return { e: false, message: `${title} изменен! uuid: ${uuidUrlProduct} ====>`, putProduct };
+  } catch (e) {
+    return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
+  }
+
+  // return 'PUT';
 };
 
-export default { products, newProduct, getMapXY, getProduct, delProduct, putProduct };
+const tegsdefoults: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) => {
+  const tegs = new Tegs();
+  tegs.teg = 'Для дома';
+
+  try {
+    await db.manager.save(tegs);
+    return tegs;
+  } catch (e) {
+    console.log(e);
+
+    return { e: true, message: 'Ошибка тега в базе данных' };
+  }
+};
+
+export default { products, newProduct, getMapXY, getProduct, delProduct, putProduct, tegsdefoults };

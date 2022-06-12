@@ -4,6 +4,7 @@ import * as HapiSwagger from 'hapi-swagger';
 import * as Inert from '@hapi/inert';
 import * as Vision from '@hapi/vision';
 import * as jwt from '@hapi/jwt';
+import ip from 'hapi-geo-locate';
 
 // options swagger
 // =====================================================================================
@@ -24,7 +25,11 @@ const plugins: Array<Hapi.ServerRegisterPluginObject<any>> = [
     plugin: HapiSwagger,
     options: swaggerOptions
   },
-  jwt
+  jwt,
+  // {
+  //   plugin: ip
+  // },
+  ip
 ];
 
 export default plugins;

@@ -5,6 +5,7 @@ import { get } from 'node-emoji';
 import path from 'path';
 import { User } from './entity/User';
 import { Product } from './entity/Product';
+import { Tegs } from './entity/Tegs';
 
 const db = new DataSource(
   {
@@ -16,7 +17,7 @@ const db = new DataSource(
     database: 'postgres',
     synchronize: true,
     logging: false,
-    entities: [User, Product,
+    entities: [User, Product, Tegs,
       path.join(__dirname, 'entity/*.ts')
     ],
     migrations: [

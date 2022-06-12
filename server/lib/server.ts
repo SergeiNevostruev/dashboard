@@ -8,6 +8,7 @@ import userRoute from '../routes/userRoute';
 import productRoute from '../routes/productRoute';
 import authController from '../controllers/authController';
 import config from '../config/config.json';
+// import selectProductsRoute from '../routes/selectProductsRoute';
 
 // server
 // =====================================================================================
@@ -34,7 +35,9 @@ const init = async (): Promise<void> => {
     validate: authController.validate
   });
 
-  server.route([...userRoute, ...productRoute]);
+  server.route([...userRoute, ...productRoute,
+    // ...selectProductsRoute
+  ]);
 
   // eslint-disable-next-line no-console
   await server.start().then(() => console.log(get('rocket'), get('computer'), `Сервер запущен на ${server.info.uri}`.bgMagenta));

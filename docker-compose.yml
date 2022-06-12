@@ -28,10 +28,20 @@ services:
     restart: always
     # restart: on-failure
     environment:
-      # - POSTGRES_USER=demo_user
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      # - POSTGRES_DB=test
+      - POSTGRES_DB=postgres
     ports:
       - '5432:5432'
     networks:
       - postgres-base-net
+
+  # pgadmin:
+  #   container_name: pgadmin4_container
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: root
+  #   ports:
+  #     - "5050:80"

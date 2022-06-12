@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/hapi__jwt": "^2.0.1",
+    "@types/pg": "^8.6.5",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "concurrently": "^7.1.0",
@@ -44,8 +45,10 @@
     "@types/node-emoji": "^1.8.1",
     "axios": "^0.27.2",
     "colors": "^1.4.0",
+    "hapi-geo-locate": "^3.2.0",
     "hapi-swagger": "^14.5.1",
     "joi": "^17.6.0",
+    "moment-timezone": "^0.5.34",
     "node-emoji": "^1.11.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",

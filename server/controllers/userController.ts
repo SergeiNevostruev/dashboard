@@ -12,7 +12,7 @@ type NewUserType = {
     consent: boolean;
 }
 
-const hello: () => { msg: string;} = () => ({ msg: 'Hello Dashboard' });
+const hello: any = (req: any, h: Hapi.ResponseToolkit) => ({ msg: 'Hello Dashboard', ip: req.location });
 
 const users: any = async () => {
   console.log('поиск пользователей');
@@ -27,7 +27,7 @@ const users: any = async () => {
   }
 };
 
-const newuser = async (request: Hapi.Request, reply: Hapi.ResponseApplicationState) => {
+const newuser = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
 //   console.log('новый пользователь');
   const {
     firstName,
@@ -61,15 +61,4 @@ const newuser = async (request: Hapi.Request, reply: Hapi.ResponseApplicationSta
   }
 };
 
-const validPassword = (password: string, salt: string, hash: string) => {
-  const hashCheck = crypto.pbkdf2Sync(
-    password,
-    salt,
-    1000,
-    64,
-    'sha512'
-  ).toString('hex');
-  return hashCheck === hash;
-};
-
-export default { hello, users, newuser, validPassword };
+export default { hello, users, newuser };
