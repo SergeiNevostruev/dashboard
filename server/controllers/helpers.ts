@@ -6,10 +6,12 @@ import { access, mkdir, rm } from 'fs/promises';
 import path from 'path';
 // import Joi from 'joi';
 import Boom from '@hapi/boom';
+import moment from 'moment-timezone';
 import { User } from '../entity/User';
 // import db from '../db';
 import { Product } from '../entity/Product';
 import config from '../config/config.json';
+import db from '../db';
 
 const validPassword = (password: string, salt: string, hash: string) => {
   const hashCheck = crypto.pbkdf2Sync(
@@ -71,4 +73,60 @@ const writePhotoFile = async (photoUrl: Product['photoUrl'], file: photoHapiStri
   return { e: false, message: JSON.stringify(photoPaths) };
 };
 
-export { writePhotoFile, validPassword };
+const getProguctPageDB = async (
+  tegs: number[],
+  productNumberPang: number,
+  countProductOnPage: number,
+  userUuid: string | false = false,
+  sort: 'DESC' | 'ASC' = 'DESC',
+  sortTitle: string = 'createDate',
+) => {
+  const fields = [
+    'product.id',
+    'product.title',
+    'product.tel',
+    'product.teg',
+    'product.price',
+    'product.about',
+    'product.photoUrl',
+    'product.address',
+    'product.mapXY',
+    'product.views',
+    'product.tel',
+    // 'product.userUuid',
+    'product.uuid',
+    'product.createDate'];
+  if (userUuid) {
+    const data = await db
+      .getRepository(Product)
+      .createQueryBuilder()
+      .select(fields)
+      .from(Product, 'product')
+      .where('product.teg IN (:...tegs)', { tegs })
+      .andWhere('product.userUuid = :userUuid', { userUuid })
+      .offset(productNumberPang)
+      .limit(countProductOnPage)
+      .distinct(true)
+      .orderBy(`product.${sortTitle}`, sort, 'NULLS LAST')
+      .getMany();
+    return data.map((obj) => ({ ...obj,
+      createDate: moment(obj.createDate)
+        .tz('Europe/Moscow', true).format() }));
+  }
+  const data = await db
+    .getRepository(Product)
+    .createQueryBuilder()
+    .select(fields)
+    .from(Product, 'product')
+    .where('product.teg IN (:...tegs)', { tegs })
+    .offset(productNumberPang)
+    .limit(countProductOnPage)
+    .distinct(true)
+    .orderBy(`product.${sortTitle}`, sort, 'NULLS LAST')
+    .getMany();
+  return data.map((obj) => ({ ...obj,
+    createDate: moment(obj.createDate)
+      .tz('Europe/Moscow', true).format() }));
+};
+
+export { writePhotoFile, validPassword, getProguctPageDB };

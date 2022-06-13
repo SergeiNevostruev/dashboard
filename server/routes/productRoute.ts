@@ -20,16 +20,38 @@ const productRoute: Hapi.ServerRoute[] = [
           page: Joi.string().regex(/\d/),
           tegs: Joi.string(),
           count: Joi.string().regex(/\d/),
+          sort: Joi.string(),
+          sortTitle: Joi.string(),
         })
       }
     }
   },
-
+  {
+    method: 'GET',
+    path: '/api/product/{uuid}',
+    options: {
+      handler: handlers.getProduct,
+      description: 'Get product',
+      notes: 'Returns product',
+      tags: ['api'],
+    }
+  },
   {
     method: 'GET',
     path: '/api/tegsdefoults',
     options: {
+      // auth: { strategies: ['auth'], scope: ['admin'] },
       handler: handlers.tegsdefoults,
+      description: 'Create default tegs',
+      notes: 'Return teg',
+      tags: ['api'],
+    }
+  },
+  {
+    method: 'GET',
+    path: '/api/tegs',
+    options: {
+      handler: handlers.getTegs,
       description: 'Get users of database',
       notes: 'Returns array with users',
       tags: ['api'],
@@ -42,6 +64,7 @@ const productRoute: Hapi.ServerRoute[] = [
     method: 'POST',
     path: '/api/mapXY',
     options: {
+      auth: { strategies: ['auth'], scope: ['user'] },
       handler: handlers.getMapXY,
       description: 'Get X and Y',
       notes: 'Returns {X, Y}',
@@ -85,21 +108,22 @@ const productRoute: Hapi.ServerRoute[] = [
     handler: handlers.newProduct,
   },
   {
-    method: 'GET',
-    path: '/api/product/{uuid}',
-    options: {
-      handler: handlers.getProduct,
-      description: 'Get product',
-      notes: 'Returns product',
-      tags: ['api'],
-    }
-  },
-  {
     method: 'DELETE',
     path: '/api/product/{uuid}',
     options: {
       auth: { strategies: ['auth'], scope: ['user', 'admin'] },
       handler: handlers.delProduct,
+      description: 'Delete product',
+      notes: 'Returns ok',
+      tags: ['api'],
+    }
+  },
+  {
+    method: 'DELETE',
+    path: '/api/admin/product/{uuid}',
+    options: {
+      auth: { strategies: ['auth'], scope: ['admin'] },
+      handler: handlers.adminDelProduct,
       description: 'Delete product',
       notes: 'Returns ok',
       tags: ['api'],
@@ -126,6 +150,29 @@ const productRoute: Hapi.ServerRoute[] = [
       description: 'Change product',
       notes: 'Returns changed product',
       tags: ['api'],
+    }
+  },
+  {
+    method: 'GET',
+    path: '/api/user-products',
+    options: {
+      auth: { strategies: ['auth'], scope: ['user'] },
+      handler: handlers.userProducts,
+      description: 'Get products of database',
+      notes: 'Returns array with users',
+      tags: ['api'],
+      validate: {
+        options: {
+          allowUnknown: true
+        },
+        query: Joi.object({
+          page: Joi.string().regex(/\d/),
+          tegs: Joi.string(),
+          count: Joi.string().regex(/\d/),
+          sort: Joi.string(),
+          sortTitle: Joi.string(),
+        })
+      }
     }
   },
 ];

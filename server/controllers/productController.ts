@@ -11,7 +11,7 @@ import { User } from '../entity/User';
 import db from '../db';
 import { Product } from '../entity/Product';
 import config from '../config/config.json';
-import { writePhotoFile } from './helpers';
+import { getProguctPageDB, writePhotoFile } from './helpers';
 import { Tegs } from '../entity/Tegs';
 
 const { constants } = fs;
@@ -58,14 +58,26 @@ const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
 ) => {
-  const countPage = await db.getRepository(Product).count();
+  let sort = request.query.sort as 'DESC' | 'ASC';
+  let sortTitle = request.query.sorttitle as string;
+  if (sort !== 'DESC' && sort !== 'ASC') sort = 'DESC';
+  if (sortTitle !== 'createDate' && sortTitle !== 'title' && sortTitle !== 'teg') sortTitle = 'createDate';
+  const countProduct = await db.getRepository(Product).count();
   // парсинг квери запросов query = {page, tegs, count}
   const pageQuery = (Number(request.query.page) || 1) - 1;
   const countProductOnPage = Number(request.query.count) || 3;
-  const productNumberPang = (countPage > countProductOnPage * pageQuery || countPage <= 0)
-    ? pageQuery * countProductOnPage : countPage - countProductOnPage;
+  // eslint-disable-next-line no-nested-ternary
+  const productNumberPang = (countProduct > countProductOnPage * pageQuery
+    || countProduct <= 0)
+    ? pageQuery * countProductOnPage
+    : ((countProduct - countProductOnPage > 0)
+      ? countProduct - countProductOnPage
+      : 0);
+  const countPage = Math.ceil(countProduct / countProductOnPage);
+  // console.log(countProduct / countProductOnPage);
 
   let changeNaNtegs: boolean = false;
+  // стиль тегов
   // const tegstr = '1,2,3,4,5';
   const tegsQuery = request.query.tegs;
   const tegsDB = await db.manager.find(Tegs).catch();
@@ -78,38 +90,24 @@ const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     }
     return Number(el);
   }) || tegsDB.map((i) => i.id);
-  // const tegs = [1];
   if (Number.isNaN(countProductOnPage) || changeNaNtegs) return Boom.notFound('Неверный запрос');
 
   try {
-    const data = await db
-      .getRepository(Product)
-      .createQueryBuilder()
-      .select([
-        'product.id',
-        'product.title',
-        'product.tel',
-        'product.teg',
-        'product.price',
-        'product.about',
-        'product.photoUrl',
-        'product.address',
-        'product.mapXY',
-        'product.views',
-        'product.tel',
-        'product.userUuid',
-        'product.createDate'])
-      .from(Product, 'product')
-      .where('product.teg IN (:...tegs)', { tegs })
-      .offset(productNumberPang)
-      .limit(countProductOnPage)
-      .distinct(true)
-      .orderBy('product.createDate', 'DESC', 'NULLS LAST')
-      .getMany();
+    const data = await getProguctPageDB(
+      tegs,
+      productNumberPang,
+      countProductOnPage,
+      false,
+      sort,
+      sortTitle
+    );
 
-    return data.map((obj) => ({ ...obj,
-      createDate: moment(obj.createDate)
-        .tz('Europe/Moscow', true).format() }));
+    return {
+      countProduct,
+      countPage,
+      countProductOnPage,
+      pageNumber: pageQuery + 1,
+      data };
   } catch (e) {
     return Boom.internal('Неведома ошибка сервера');
   }
@@ -243,6 +241,30 @@ const delProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   return Boom.notFound('Невозможно удалить. Такого объявления нет в Вашем аккаунте');
 };
 
+const adminDelProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) => {
+  const uuidUrlProduct = request.params.uuid as string;
+  if (!uuidUrlProduct) {
+    return Boom.notFound('Такого объявления нет в Вашем аккаунте');
+  }
+
+  const delProduct = await db
+    .manager
+    .findOneBy(Product, { uuid: uuidUrlProduct }).catch((e) => {
+      Boom.notFound('Такого объявления нет в Вашем аккаунте');
+    });
+
+  if (delProduct) {
+    const { title } = delProduct;
+    await db.manager.remove(delProduct);
+    console.log('Удален');
+    return { e: false, message: `Объявление ${title} удалено` };
+  }
+  return Boom.notFound('Невозможно удалить. Такого объявления нет в Вашем аккаунте');
+};
+
 const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
@@ -343,4 +365,91 @@ const tegsdefoults: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   }
 };
 
-export default { products, newProduct, getMapXY, getProduct, delProduct, putProduct, tegsdefoults };
+const getTegs: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) => {
+  console.log('поиск тегов');
+  try {
+    const data = await db.manager.find(Tegs);
+
+    return data;
+  } catch (e) {
+    console.log('ошибка ', e);
+    return { error: JSON.stringify(e) };
+  }
+};
+
+const userProducts: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit
+) => {
+  const userUuid = request.auth.credentials.uuid as string;
+  if (!userUuid) return Boom.notFound('Неверный запрос');
+  let sort = request.query.sort as 'DESC' | 'ASC';
+  let sortTitle = request.query.sorttitle as string;
+  if (sort !== 'DESC' && sort !== 'ASC') sort = 'DESC';
+  if (sortTitle !== 'createDate' && sortTitle !== 'title' && sortTitle !== 'teg') sortTitle = 'createDate';
+  const countProduct = await db.getRepository(Product).countBy({ userUuid });
+  // console.log(countProduct);
+  // парсинг квери запросов query = {page, tegs, count}
+  const pageQuery = (Number(request.query.page) || 1) - 1;
+  const countProductOnPage = Number(request.query.count) || 8;
+  // eslint-disable-next-line no-nested-ternary
+  const productNumberPang = (countProduct > countProductOnPage * pageQuery
+    || countProduct <= 0)
+    ? pageQuery * countProductOnPage
+    : ((countProduct - countProductOnPage > 0)
+      ? countProduct - countProductOnPage
+      : 0);
+  const countPage = Math.ceil(countProduct / countProductOnPage);
+
+  let changeNaNtegs: boolean = false;
+  // стиль тегов
+  // const tegstr = '1,2,3,4,5';
+  const tegsQuery = request.query.tegs;
+  const tegsDB = await db.manager.find(Tegs).catch();
+  if (!tegsDB) return Boom.internal('Теги не найдены');
+  const tegs = tegsQuery?.split(',').map((el: string) => {
+    if (changeNaNtegs) return 0;
+    if (Number.isNaN(Number(el))) {
+      changeNaNtegs = true;
+      return 0;
+    }
+    return Number(el);
+  }) || tegsDB.map((i) => i.id);
+  if (Number.isNaN(countProductOnPage) || changeNaNtegs) return Boom.notFound('Неверный запрос');
+
+  try {
+    const data = await getProguctPageDB(
+      tegs,
+      productNumberPang,
+      countProductOnPage,
+      userUuid,
+      sort,
+      sortTitle
+    );
+
+    return {
+      countProduct,
+      countPage,
+      countProductOnPage,
+      pageNumber: pageQuery + 1,
+      data };
+  } catch (e) {
+    return Boom.internal('Неведомая ошибка сервера');
+  }
+};
+
+export default {
+  products,
+  newProduct,
+  getMapXY,
+  getProduct,
+  delProduct,
+  putProduct,
+  tegsdefoults,
+  getTegs,
+  userProducts,
+  adminDelProduct,
+};
