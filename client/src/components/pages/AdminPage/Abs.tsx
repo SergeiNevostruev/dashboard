@@ -33,7 +33,7 @@ const Abs = ({ id, title }: AbsPropType) =>
           <span>Вернуться назад</span>
         </div>
         {/* {id === 'new' ? <h1>Новое объявление</h1> : <h1>Объявление №{id}</h1>} */}
-        <AbsForm title={title || 'Новое объявление'} />
+        <AbsForm defaultValue={undefined} />
       </section>
     );
   };

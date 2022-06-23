@@ -1,15 +1,20 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import authSlice from './auth'; 
+import thunk from 'redux-thunk';
+import authSlice from './auth/auth'; 
+import searchHeaderSlice from './searchHeader/searchHeader';
+import tegs, { getProductData } from './tegs/tegs';
 
 const rootReducer = combineReducers({
     auth: authSlice.reducer,
-    // users: usersReducer,
+    tegs: tegs,
+    searchHeader: searchHeaderSlice,
   });
 
 
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: [thunk]
 });
 
 export default store;

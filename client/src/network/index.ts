@@ -7,12 +7,13 @@ import axios, { AxiosRequestConfig } from 'axios';
 // axios.defaults.headers.post['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept';
 
 
-const PostRequest = async ({ url, method = 'GET', data = {}, params = {} }: AxiosRequestConfig) => {
+const PostRequest = async ({ url,  method = 'GET', data = {}, params = {}, headers }: AxiosRequestConfig) => {
   try {
     const response = await axios({
       method,
       url,
       data,
+      headers,
       params,
       // baseURL:'http://localhost:8080',
       // proxy: {

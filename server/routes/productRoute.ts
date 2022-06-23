@@ -38,6 +38,21 @@ const productRoute: Hapi.ServerRoute[] = [
   },
   {
     method: 'GET',
+    path: '/api/photo/{param*}',
+    options: {
+      handler: {
+        directory: {
+          path: '.',
+          redirectToSlash: true
+        }
+      },
+      description: 'Get Photo',
+      notes: 'Returns Photo',
+      tags: ['api'],
+    }
+  },
+  {
+    method: 'GET',
     path: '/api/tegsdefoults',
     options: {
       // auth: { strategies: ['auth'], scope: ['admin'] },

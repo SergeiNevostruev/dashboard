@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import style from './UserProfile.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import GetUserName from '../../../../store/auth/selectors';
-import { ClearUserNameAction } from '../../../../store/auth/actions';
+import { ClearUserNameAction } from '../../../../toolkit/auth/auth';
 import { AdminPanelIcon, AdsIcon, ExitlIcon } from '../../Icons';
+import GetUserName from '../../../../toolkit/auth/selectors';
 
 const Menu = ({ admin }: { admin: boolean }) => {
   const dispatch = useDispatch();
@@ -27,7 +27,11 @@ const Menu = ({ admin }: { admin: boolean }) => {
           <p>Админ Панель</p>
         </Link>
       )}
-      <div className={style.profile} onClick={() => dispatch(ClearUserNameAction())}>
+      <div
+        className={style.profile}
+        onClick={() => {
+          dispatch(ClearUserNameAction());
+        }}>
         <ExitlIcon />
         <p>Выход</p>
       </div>

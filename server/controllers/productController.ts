@@ -11,7 +11,7 @@ import { User } from '../entity/User';
 import db from '../db';
 import { Product } from '../entity/Product';
 import config from '../config/config.json';
-import { getProguctPageDB, writePhotoFile } from './helpers';
+import { getProguctCount, getProguctPageDB, writePhotoFile } from './helpers';
 import { Tegs } from '../entity/Tegs';
 
 const { constants } = fs;
@@ -60,9 +60,12 @@ const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 ) => {
   let sort = request.query.sort as 'DESC' | 'ASC';
   let sortTitle = request.query.sorttitle as string;
+  let search = request.query.search as string;
+  if (!search) search = '';
   if (sort !== 'DESC' && sort !== 'ASC') sort = 'DESC';
   if (sortTitle !== 'createDate' && sortTitle !== 'title' && sortTitle !== 'teg') sortTitle = 'createDate';
   const countProduct = await db.getRepository(Product).count();
+
   // парсинг квери запросов query = {page, tegs, count}
   const pageQuery = (Number(request.query.page) || 1) - 1;
   const countProductOnPage = Number(request.query.count) || 3;
@@ -99,10 +102,21 @@ const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
       countProductOnPage,
       false,
       sort,
-      sortTitle
+      sortTitle,
+      search
+    );
+    const countProductReq = await getProguctCount(
+      tegs,
+      productNumberPang,
+      countProductOnPage,
+      false,
+      sort,
+      sortTitle,
+      search
     );
 
     return {
+      countProductReq,
       countProduct,
       countPage,
       countProductOnPage,
@@ -128,7 +142,7 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   h: Hapi.ResponseToolkit
 ) => {
   // console.log('новое объявление ', request.auth.credentials.uuid);
-
+  console.log(request.payload);
   const { uuid } = request.auth.credentials;
   if (!uuid) {
     return { e: true, message: 'Нужна авторизация' };
@@ -190,7 +204,8 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 
   try {
     await db.manager.save(product);
-    return { e: false, message: `${title} создан!`, product };
+    const { uuid, title } = product;
+    return { e: false, message: `${title} создан!`, product: { uuid, title } };
   } catch (e) {
     return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
   }
@@ -207,10 +222,10 @@ const getProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   }
   try {
     const user = await db.manager.findOneBy(Product, { uuid });
-    const { about, address, mapXY, photoUrl, price, teg, tel, title, views } = user;
+    const { about, address, mapXY, photoUrl, price, teg, tel, title, views, createDate } = user;
     user.views += 1; // ====> простой счетчик просмотров
     await db.manager.save(user).catch((e) => Boom.internal('Неведомая беда произошла на сервере'));
-    return { about, address, mapXY, photoUrl, price, teg, tel, title, views };
+    return { about, address, mapXY, photoUrl, price, teg, tel, title, views, createDate };
   } catch (e) {
     return h.view('404').code(404);
   }
@@ -280,6 +295,7 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     mapXY,
     file
   } = request.payload as NewProductType;
+  console.log(request.payload);
 
   const uuidUrlProduct = request.params.uuid as string;
   const uuidUserToken = request.auth.credentials.uuid as string;
@@ -340,7 +356,9 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 
   try {
     await db.manager.save(putProduct);
-    return { e: false, message: `${title} изменен! uuid: ${uuidUrlProduct} ====>`, putProduct };
+    const { uuid, title } = putProduct;
+    // return { e: false, message: `${title} создан!`, product: { uuid, title } };
+    return { e: false, message: `${title} изменен! uuid: ${uuidUrlProduct} ====>`, product: { uuid, title } };
   } catch (e) {
     return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
   }
@@ -386,6 +404,8 @@ const userProducts: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 ) => {
   const userUuid = request.auth.credentials.uuid as string;
   if (!userUuid) return Boom.notFound('Неверный запрос');
+  let search = request.query.search as string;
+  if (!search) search = '';
   let sort = request.query.sort as 'DESC' | 'ASC';
   let sortTitle = request.query.sorttitle as string;
   if (sort !== 'DESC' && sort !== 'ASC') sort = 'DESC';
@@ -427,7 +447,8 @@ const userProducts: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
       countProductOnPage,
       userUuid,
       sort,
-      sortTitle
+      sortTitle,
+      search
     );
 
     return {

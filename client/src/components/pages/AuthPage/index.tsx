@@ -1,7 +1,9 @@
+import { message } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { SetUserNameAction } from '../../../toolkit/auth';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import PostRequest from '../../../network';
+import { SetUserNameAction } from '../../../toolkit/auth/auth';
 import Button from '../../common/Button';
 import Form from '../../common/Form';
 import Input from '../../common/Form/Input';
@@ -9,32 +11,58 @@ import style from './AuthPage.module.scss';
 
 const AuthPage = () => {
   const dispatch = useDispatch();
-  const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [hasError, setHasError] = useState(false);
 
-  const submitHandler = useCallback(() => {
-    if (password.length > 10) {
-      setHasError(false);
-      dispatch(SetUserNameAction(name));
-      console.log({ name, password });
-    } else {
-      setHasError(true);
-      console.log('Error');
-    }
-  }, [name, password]);
+  // const submitHandler = useCallback(() => {
+  //   if (password.length > 10) {
+  //     setHasError(false);
+  //     dispatch(SetUserNameAction(name));
+  //     console.log({ name, password });
+  //   } else {
+  //     setHasError(true);
+  //     console.log('Error');
+  //   }
+  // }, [name, password]);
 
-  useEffect(() => {
-    if (password.length > 10) {
-      setHasError(false);
-    } else if (password.length > 0) {
-      setHasError(true);
+  const submitHandler = async () => {
+    interface DataType {
+      e: boolean;
+      message: string;
+      token?: string;
+      firstName?: string;
+      lastName?: string;
     }
-  }, [password]);
+    console.log('запрос данных');
+
+    const data: DataType = await PostRequest({ url: '/api/auth', method: 'POST', data: { email, password } });
+    data.e ? message.warning(data.message) : message.success(data.message);
+    if (data && !data.e) {
+      dispatch(
+        SetUserNameAction({
+          name: data.firstName,
+          token: data.token,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        })
+      );
+      navigate('/');
+    }
+  };
+
+  // useEffect(() => {
+  //   if (password.length > 10) {
+  //     setHasError(false);
+  //   } else if (password.length > 0) {
+  //     setHasError(true);
+  //   }
+  // }, [password]);
 
   return (
     <Form title="Авторизация">
-      <Input title="Name" id="name" placeholder="Введите почту" value={name} setValue={setName} />
+      <Input title="Email" id="email" placeholder="Введите почту" value={email} setValue={setEmail} />
       <Input
         title="Password"
         id="password"

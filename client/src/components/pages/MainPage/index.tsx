@@ -1,20 +1,22 @@
 import Tegs from './Tegs';
 import TopBlock from './TopBlock';
 import style from './MainPage.module.scss';
-import ProductCards from './ProductCards';
+import ProductCards, { CardPropsType } from './ProductCards';
 import Button from '../../common/Button';
 import testcard from '../../../assets/img/test_card.jpg';
-import { useState } from 'react';
-
-const tegs = [
-  { id: '1', name: 'Автомобили' },
-  { id: '2', name: 'Аксессуары' },
-  { id: '3', name: 'Мебель' },
-  { id: '4', name: 'Одежда' },
-  { id: '5', name: 'Спорт' },
-  { id: '6', name: 'Техника' },
-  { id: '7', name: 'Товары для дома' },
-];
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import selectorTegStore from '../../../toolkit/tegs/selectors';
+import { TegsReducerType, TegType } from '../../../toolkit/tegs/types';
+import PostRequest from '../../../network';
+import {
+  getProductData,
+  getTegsData,
+  SetDataProductAction,
+  SetPageCountAction,
+  SetTegsAction,
+} from '../../../toolkit/tegs/tegs';
+import { useLocation } from 'react-router-dom';
 
 const data = [
   {
@@ -91,37 +93,90 @@ const data = [
 
 const MainPage = () => {
   const [spinner, setSpinner] = useState(false);
+  const dispatch = useDispatch();
+  const tegsInStore = useSelector(selectorTegStore.GetTegsArray);
+  const dataInStore = useSelector(selectorTegStore.GetMainProductArray);
+  const countInStore = useSelector(selectorTegStore.GetProductCountOnMaimPage);
+  const defaultCount = 6;
+  const dataDB = dataInStore.data as CardPropsType[];
+  console.log('компонент');
+
+  let location = useLocation();
+
+  useEffect(() => {
+    dispatch(SetPageCountAction({ count: defaultCount }));
+    dispatch(getProductData());
+  }, [location]);
+
+  const tegsParam = tegsInStore
+    .filter((v) => v.change === true)
+    .map((v) => v.id)
+    .join(',');
+  console.log();
+
   const handleClick = () => {
     console.log('Подгрузка данных');
     setSpinner(true);
     setTimeout(() => setSpinner(false), 3000);
+    dispatch(SetPageCountAction({ count: countInStore + defaultCount }));
+    dispatch(getProductData());
   };
+
+  const clickButton = (id: TegType['id'] | 'all') => {
+    if (tegsInStore) {
+      if (id !== 'all') {
+        const tegsChange = {
+          tegs: tegsInStore.map((v) => (v.id === +id ? { id: v.id, teg: v.teg, change: !v.change } : v)),
+        };
+        dispatch(SetTegsAction(tegsChange));
+        dispatch(getProductData());
+      } else {
+        const tegsChange = {
+          tegs: tegsInStore.map((v) => ({ id: v.id, teg: v.teg, change: false })),
+        };
+        dispatch(SetTegsAction(tegsChange));
+        dispatch(getProductData());
+      }
+    }
+    dispatch(SetPageCountAction({ count: defaultCount }));
+    dispatch(getProductData());
+  };
+
+  useLayoutEffect(() => {
+    if (tegsInStore) {
+      dispatch(getTegsData());
+      dispatch(getProductData());
+      dispatch(SetPageCountAction({ count: defaultCount }));
+    }
+  }, []);
+  // useEffect(() => {
+  //   if (tegsInStore) {
+  //     dispatch(getTegsData());
+  //     dispatch(getProductData());
+  //   }
+  //   dispatch(SetPageCountAction({ count: defaultCount }));
+  // }, []);
+
+  // useEffect(() => {
+  //   dispatch(SetPageCountAction({ count: 3 }));
+  //   dispatch(getProductData());
+  // }, []);
+
   return (
     <>
       <TopBlock />
       <div className={style.tegs_block}>
         {spinner && (
           <svg className={style.spinner} viewBox="0 0 50 50">
-            <circle
-              className={style.path}
-              cx="25"
-              cy="25"
-              r="20"
-              fill="none"
-              stroke-width="5"></circle>
+            <circle className={style.path} cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
           </svg>
         )}
-        <Tegs tegs={tegs} />
+        <Tegs tegs={tegsInStore} onClick={clickButton} />
         <h2 className={style.tegs_block_title}>Вся лента</h2>
-        <ProductCards data={data} />
+        <ProductCards data={dataDB} />
         <div className={style.tegs_block_button_center}>
           <Button onClick={handleClick} className={style.tegs_block_button}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M11.3333 0.666656L13.9999 3.33332L11.3333 5.99999"
                 stroke="#4877F2"

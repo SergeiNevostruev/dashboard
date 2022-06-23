@@ -1,58 +1,35 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { TegsReducerType, TegType } from '../../../../toolkit/tegs/types';
 import Button from '../../../common/Button';
 import style from './Tegs.module.scss';
 
-type Teg = {
-  id: string;
-  name: string;
-  change?: boolean;
-};
-
 type TegsPropType = {
-  tegs: Teg[];
-  onClick?: (id: string) => void;
+  tegs: TegsReducerType;
+  // tegs: Teg[];
+  onClick?: any;
 };
 
 const Tegs = ({ tegs, onClick }: TegsPropType) => {
-  const tegsToogle = tegs.map((v) => {
-    return { ...v, change: false };
-  });
+  useEffect(() => {
+    console.log('рендер');
+  }, [tegs]);
 
-  const [tegsStyle, setTegsStyle] = useState(() => tegsToogle);
-
-  const isActive = (id: string) => {
-    setTegsStyle((v) => {
-      console.log(v);
-      const number = v.findIndex((item) => item.id === id);
-      v[number].change = !v[number].change;
-      return [...v];
-    });
-  };
-
-  //   useEffect(() => {
-  //     console.log('рендер');
-  //   }, [...tegsStyle]);
-
-  const handleClick = (id: string) => () => {
-    isActive(id);
+  const handleClick = (id: TegType['id'] | 'all') => () => {
+    // isActive(id);
+    onClick(id);
     console.log(id);
   };
 
   return (
     <div className={style.tegs}>
-      <Button
-        title={'Вся доска'}
-        onClick={handleClick('1')}
-        className={`${style.button} ${style.button_orange}`}
-      />
+      <Button title={'Вся доска'} onClick={handleClick('all')} className={`${style.button} ${style.button_orange}`} />
       {tegs.map((v, i) => (
         <Button
-          title={v.name}
+          title={v.teg}
           onClick={handleClick(v.id)}
-          className={`${style.button}`}
+          className={!!v.change ? `${style.button_active} ${style.button}` : `${style.button}`}
           key={v.id}
-          changeClass={style.button_active}
-          changeValue={tegsStyle[i].change}
         />
       ))}
     </div>

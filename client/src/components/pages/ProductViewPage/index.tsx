@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ReactImageGalleryItem } from 'react-image-gallery';
 import Button from '../../common/Button';
 import Eye from '../../common/Eye';
@@ -6,6 +6,9 @@ import style from './ProductViewPage.module.scss';
 import RecProduct, { RecProductPropsType } from './RecProduct';
 import Slider from './Slider';
 import { YMaps, Map, Placemark } from 'react-yandex-maps';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import selectorTegStore from '../../../toolkit/tegs/selectors';
 
 type ProductViewPagePropType = {
   page: string | undefined;
@@ -27,10 +30,12 @@ type ProductViewPagePropType = {
 const ProductViewPage = ({ page, images, productInfo, searchProduct }: ProductViewPagePropType) => {
   console.log('страница товара');
   const [viewTel, SetViewTel] = useState(false);
+  // const searchPageStore = useSelector(selectorTegStore.GetSearchProduct);
+  // const location = useLocation();
   //   const viewTel = () => {
   //     SetViewTel(true);
   //   };
-
+  // location.pathname = '';
   return (
     <div className={style.container}>
       <p className={style.date}>{productInfo?.date}</p>
