@@ -16,7 +16,7 @@ export type CardPropsType = {
   price: number;
   date: string;
   // viewscount: number | string;
-  // mapXY?: { x: number; y: number };
+  mapXY?: { x: number; y: number };
   address?: string;
   // tegs: string;
   teg: number;
@@ -54,7 +54,7 @@ const ProductCards = ({ data }: DataPropsType) => {
 
   return !data ? (
     <svg className={style.spinner} viewBox="0 0 50 50">
-      <circle className={style.path} cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+      <circle className={style.path} cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
     </svg>
   ) : (
     <div className={style.product_cards}>

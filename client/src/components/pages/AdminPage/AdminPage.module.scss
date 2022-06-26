@@ -111,29 +111,103 @@
     height: 40px;
     padding: 0 20px;
     margin-left: 10px;
-    // width: 100%;
-    // max-width: 153px;
+    position: relative;
+    width: 100%;
+    max-width: 153px;
     background-color: rgba(42, 47, 55, 0.08);
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     cursor: pointer;
     transition: 200ms;
-    span {
+    & > span {
         margin-right: 20px;
     }
 }
 
+
+.checkbox {
+    display: none;
+    padding: 10px;
+    background-color: $sub-color;
+    position: absolute;
+    top: 100%;
+    left: 0%;
+    width: 100%;
+    border: 1px solid $color-input-border;
+    opacity: 0;
+    transition: 500ms;
+}
+
+:global(.ant-row) {
+    display: block;
+}
+
+:global(.ant-col-8) {
+    max-width: none;
+}
+
+.none {
+    display: none;
+}
+
 .filter:hover {
     background-color: rgba(42, 47, 55, 0.18);
+    // transition: 500ms;
+    // left: 0%;
 }
 
-.filter:active {
-    background-color: rgba(35, 73, 135, 0.18);
+.filter:hover .checkbox {
+    display: block;
+    opacity: 0.99;
+    // transform: ;
+    transition: 500ms;
+    left: 0%;
 }
 
+.filtertitle {
+    display: block;
+    white-space: nowrap;
+}
+.menu {
+    z-index: 100;
+    display: none;
+    position: absolute;
+    padding: 10px;
+    background-color: $sub-color;
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    width: auto;
+    border: 1px solid $color-input-border;
+    opacity: 0;
+    // display: flex;
+    // flex-direction: column;
+    transition: 500ms;
+    & > a, div {
+        display: flex;
+        flex-wrap: nowrap;
+        & > svg {
+            margin-right: 5px;
+        }
+        padding: 10px;
+        font-size: $text-size;
+    }
+    & > a:hover, div:hover {
+        background-color: rgba(0, 206, 209, 0.1);
+        transition: 200ms;
+        & > svg > path {
+            stroke: $button-color-blue;
+        }
+        color: $button-color-blue;
+    }
+}
 
-
+.button_editingmenu:hover .menu {
+    display: flex;
+    flex-direction: column;
+    opacity: 0.99;
+}
 
 .main_section_search {
     width: 100%;    
@@ -167,6 +241,7 @@
     align-items: center;
     cursor: pointer;
     transition: 200ms;
+    position: relative;
 }
 
 .tableabs {

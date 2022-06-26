@@ -149,19 +149,6 @@ const MainPage = () => {
       dispatch(SetPageCountAction({ count: defaultCount }));
     }
   }, []);
-  // useEffect(() => {
-  //   if (tegsInStore) {
-  //     dispatch(getTegsData());
-  //     dispatch(getProductData());
-  //   }
-  //   dispatch(SetPageCountAction({ count: defaultCount }));
-  // }, []);
-
-  // useEffect(() => {
-  //   dispatch(SetPageCountAction({ count: 3 }));
-  //   dispatch(getProductData());
-  // }, []);
-
   return (
     <>
       <TopBlock />

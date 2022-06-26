@@ -16,17 +16,6 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
   const [hasError, setHasError] = useState(false);
 
-  // const submitHandler = useCallback(() => {
-  //   if (password.length > 10) {
-  //     setHasError(false);
-  //     dispatch(SetUserNameAction(name));
-  //     console.log({ name, password });
-  //   } else {
-  //     setHasError(true);
-  //     console.log('Error');
-  //   }
-  // }, [name, password]);
-
   const submitHandler = async () => {
     interface DataType {
       e: boolean;
@@ -34,31 +23,25 @@ const AuthPage = () => {
       token?: string;
       firstName?: string;
       lastName?: string;
+      scope?: string;
     }
     console.log('запрос данных');
 
     const data: DataType = await PostRequest({ url: '/api/auth', method: 'POST', data: { email, password } });
     data.e ? message.warning(data.message) : message.success(data.message);
     if (data && !data.e) {
-      dispatch(
-        SetUserNameAction({
-          name: data.firstName,
-          token: data.token,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        })
-      );
+      const result = {
+        name: data.firstName,
+        token: data.token,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        scope: '',
+      };
+      if (data.scope) result.scope = data.scope;
+      dispatch(SetUserNameAction(result));
       navigate('/');
     }
   };
-
-  // useEffect(() => {
-  //   if (password.length > 10) {
-  //     setHasError(false);
-  //   } else if (password.length > 0) {
-  //     setHasError(true);
-  //   }
-  // }, [password]);
 
   return (
     <Form title="Авторизация">

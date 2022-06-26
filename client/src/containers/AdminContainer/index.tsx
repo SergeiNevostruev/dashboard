@@ -37,7 +37,11 @@ const fakeData = [
 ];
 
 const AdminContainer = () => {
-  return <AdminPage admin={true} count={26} data={{ data: fakeData }} />;
+  return (
+    <AdminPage
+    // admin={true} count={26} data={{ data: fakeData }}
+    />
+  );
 };
 
 export default AdminContainer;

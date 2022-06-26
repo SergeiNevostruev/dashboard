@@ -11,6 +11,10 @@ import { useEffect } from 'react';
 import { Input, Space } from 'antd';
 import Filter from './Filter';
 import TableAds, { TablePropType } from './TableAbs';
+import { getUserProductData, SetDataUserProductPageAction, SetSearchUserProduct } from '../../../toolkit/tegs/tegs';
+import { GetUserToken } from '../../../toolkit/auth/selectors';
+import selectorTegStore from '../../../toolkit/tegs/selectors';
+import Spinner from '../../common/Spinner';
 
 const { Search } = Input;
 
@@ -21,19 +25,34 @@ type OneSearchProduct = {
   date: string;
 };
 
-type SearchPagePropType = {
-  data: OneSearchProduct[];
-  count: number;
-};
+// type SearchPagePropType = {
+//   data: OneSearchProduct[];
+//   count: number;
+// };
 
-const AdminAllAbs = ({ count, data }: { count: number; data: TablePropType }) => {
+const AdminAllAbs = ({ countProd }: { countProd: number }) => {
   const href = useHref('/admin/edit/new');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = useSelector(GetUserToken);
+  const tegs = useSelector(selectorTegStore.GetUserTegsArray);
+  const dataUserDB = useSelector(selectorTegStore.GetMainUserProductArray);
+  const count = dataUserDB.countProductReq;
+  const countProductOnPage = dataUserDB.countProductOnPage || 6;
+  // console.log('count =>', count);
 
-  const onSearch = (value: any) => console.log(value);
+  const onSearch = (value: any) => {
+    dispatch(SetSearchUserProduct({ searchProduct: value }));
+    console.log(value);
+    if (token) dispatch(getUserProductData({ token, tegs }));
+  };
 
-  return (
+  const changePage: ((page: number, pageSize: number) => void) | undefined = (page, pageSize) => {
+    dispatch(SetDataUserProductPageAction({ userdatapage: page }));
+    if (token) dispatch(getUserProductData({ token, tegs }));
+  };
+
+  return dataUserDB ? (
     <section className={style.main_section}>
       <div className={style.main_section_header}>
         <div>
@@ -64,13 +83,16 @@ const AdminAllAbs = ({ count, data }: { count: number; data: TablePropType }) =>
           <Filter />
         </div>
         <div className={style.main_section_search_panel_pang}>
-          <Pagination simple size="small" total={50} />
+          <Pagination onChange={changePage} simple size="small" total={countProd + 1} pageSize={countProductOnPage} />
         </div>
       </div>
-      <TableAds data={data.data} />
+      <TableAds
+      // data={data.data}
+      />
     </section>
+  ) : (
+    <Spinner />
   );
 };
 
 export default AdminAllAbs;
-export { type OneSearchProduct, type SearchPagePropType };

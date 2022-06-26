@@ -1,5 +1,6 @@
 import * as Hapi from '@hapi/hapi';
 import crypto from 'crypto';
+import Boom from '@hapi/boom';
 import { User } from '../entity/User';
 import db from '../db';
 
@@ -38,7 +39,7 @@ const newuser = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
     consent
   } = request.payload as NewUserType;
   if (!consent) return { e: true, message: 'Нужно принять пользовательское соглашение' };
-  const changeEmail = await db.manager.findOneBy(User, { email });
+  const changeEmail = await db.manager.findOneBy(User, { email }).catch(() => Boom.internal('Ошибка сохранения в базе данных'));
   if (changeEmail) return { e: true, message: 'Такой email существует' };
   if (password !== rpassword) return { e: true, message: 'Повторный пароль введен не верно' };
   const user = new User();

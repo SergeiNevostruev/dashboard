@@ -16,8 +16,10 @@ const auth = async (request: Hapi.Request, reply: Hapi.ResponseApplicationState)
   if (!dbuser) return { e: true, message: 'Некорректные данные о пользователе' };
   const checkUser = validPassword(user.password, dbuser.salt, dbuser.hashpassword);
   if (!checkUser) return { e: true, message: 'Некорректные данные о пользователе' };
-  let scope: 'admin' | 'user' = 'user';
-  if (dbuser.role === 'admin') scope = 'admin';
+  let scope: UserRole;
+  if (dbuser.role === UserRole.ADMIN) { scope = UserRole.ADMIN; } else {
+    scope = UserRole.User;
+  }
   const token = Jwt
     .token
     .generate({
@@ -36,13 +38,17 @@ const auth = async (request: Hapi.Request, reply: Hapi.ResponseApplicationState)
 
   try {
     await db.manager.save(dbuser);
-    return {
+    const result: any = {
       e: false,
       message: 'Авторизация успешна',
       token,
       firstName: dbuser.firstName,
       lastName: dbuser.lastName,
     };
+    if (scope === UserRole.ADMIN) result.scope = scope;
+    console.log(result.scope);
+
+    return result;
   } catch (e) {
     return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
   }

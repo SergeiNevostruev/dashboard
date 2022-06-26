@@ -40,17 +40,12 @@ const RegistrationPage = () => {
   return (
     <Form title="Регистрация">
       <Input title="Name" id="name" placeholder="Имя" value={name} setValue={setName} />
-      <Input
-        title="Surname"
-        id="surname"
-        placeholder="Фамилия"
-        value={surname}
-        setValue={setSurname}
-      />
+      <Input title="Surname" id="surname" placeholder="Фамилия" value={surname} setValue={setSurname} />
       <Input title="Email" id="email" placeholder="Email" value={email} setValue={setEmail} />
       <Input
         title="Password"
         id="password"
+        type="password"
         placeholder="Пароль"
         value={password}
         setValue={setPassword}
@@ -58,6 +53,7 @@ const RegistrationPage = () => {
       <Input
         title="Repeat Password"
         id="repeatPassword"
+        type="password"
         placeholder="Повторите пароль"
         value={repeatPassword}
         setValue={setRepeatPassword}

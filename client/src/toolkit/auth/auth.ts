@@ -8,6 +8,7 @@ const authSlice = createSlice({
       token: '',
       firstName: '',
       lastName: '',
+      scope: ''
     },
     reducers: {
         SetUserNameAction: (state, action) => {
@@ -15,12 +16,14 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.firstName = action.payload.firstName;
         state.lastName = action.payload.lastName;
+        state.scope = action.payload.scope;
       },
         ClearUserNameAction: (state) => {
         state.name = '';
         state.token = '';
         state.firstName = '';
         state.lastName = '';
+        state.scope = '';
       },
     },
   })

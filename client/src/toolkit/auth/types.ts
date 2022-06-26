@@ -3,6 +3,7 @@ export type UserInfoReducerType = {
   token?: string;
   firstName?: string;
   lastName?: string;
+  scope?: string;
 };
 
 

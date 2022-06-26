@@ -10,6 +10,7 @@ import Page404 from './components/pages/Page404';
 import ProductViewContainer from './containers/ProductViewContainer';
 import SearchContainer from './containers/SearchContainer';
 import AdminContainer from './containers/AdminContainer';
+import Profile from './components/pages/Profile';
 
 const App = () => {
   console.log('APP => start');
@@ -25,7 +26,7 @@ const App = () => {
         <Route path="admin" element={<AdminContainer />} />
         <Route path="admin/edit/:id" element={<AdminContainer />} />
         <Route path="ads" element={<h1>Мои объявления</h1>} />
-        <Route path="profile" element={<h1>Профиль</h1>} />
+        <Route path="profile" element={<Profile />} />
         <Route path="cardproduct/:id" element={<ProductViewContainer />} />
         <Route path="search" element={<SearchContainer />} />
         <Route path="*" element={<Page404 />} />

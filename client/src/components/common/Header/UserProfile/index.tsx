@@ -2,25 +2,17 @@ import style from './UserProfile.module.scss';
 import userProfile from '../../../../assets/img/userProfile.svg';
 import { useEffect, useRef, useState } from 'react';
 import Menu from './Menu';
+import { useSelector } from 'react-redux';
+import { GetUserDataInfo } from '../../../../toolkit/auth/selectors';
 
 const UserProfile = () => {
   const [menuOpen, setMenyOpen] = useState(false);
   const menuToogle = () => {
     setMenyOpen((v) => !v);
   };
-
-  // useEffect(() => {
-  //   const click = (e: any) => {
-  //     setMenyOpen((v) => !v);
-  //     // console.log('click');
-  //   };
-  //   if (menuOpen) {
-  //     document.addEventListener('click', click, true);
-  //   }
-  //   return () => document.removeEventListener('click', click, true);
-  // });
-
-  const admin = true; // получаем флаг админ
+  const user = useSelector(GetUserDataInfo);
+  const scope = user.scope;
+  const admin = scope === 'admin' ? true : false; // получаем флаг админ
 
   return (
     <div className={style.link}>

@@ -1,0 +1,14 @@
+@import '../../../assets/style/vars.scss';
+
+.page {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    &  h1 {
+       margin-bottom: 30px;
+    }
+    & a {
+        color: $button-color-blue;
+    }
+}

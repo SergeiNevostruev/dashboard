@@ -34,26 +34,7 @@ type NewProductType = {
 //  ==========================================================================
 //  ==========================================================================
 
-const getMapXY = async (addres: string): Promise<NewProductType['mapXY']> => {
-  console.log('получение координат ', addres);
-  // const queryParams = `? geocode=${addres} & apikey=${config.mapkey} & format=json`;
-  // const res: AxiosResponse = await axios(config.yaurl + queryParams);
-  // console.log(res);
-  return { x: 51, y: 52 };
-};
-
-// const products: any = async () => {
-//   console.log('поиск объявлений');
-//   try {
-//     const data = await db.manager.find(Product);
-//     // console.log(data);
-//     return data;
-//   } catch (e) {
-//     console.log('ошибка ', e);
-//     return { error: JSON.stringify(e) };
-//   }
-// };
-
+const getMapXY = async (addres: string): Promise<NewProductType['mapXY']> => ({ x: 51, y: 52 });
 const products: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
@@ -142,7 +123,7 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   h: Hapi.ResponseToolkit
 ) => {
   // console.log('новое объявление ', request.auth.credentials.uuid);
-  console.log(request.payload);
+  // console.log(request.payload);
   const { uuid } = request.auth.credentials;
   if (!uuid) {
     return { e: true, message: 'Нужна авторизация' };
@@ -156,7 +137,7 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     price,
     about,
     address,
-    mapXY,
+    // mapXY,
     file
   } = request.payload as NewProductType;
 
@@ -170,7 +151,7 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     address
   });
   if (validForm.error) return { e: true, message: 'Некорректно заполнена форма' };
-  const user = await db.manager.findOneBy(User, { uuid: userUuid });
+  const user = await db.manager.findOneBy(User, { uuid: userUuid }).catch();
 
   if (!user) return { e: true, message: 'Некорректный пользователь' };
 
@@ -186,6 +167,8 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   product.user = user;
 
   const id = user.uuid;
+  // console.log(id);
+  // console.log(product);
 
   try {
     await access(
@@ -207,7 +190,8 @@ const newProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     const { uuid, title } = product;
     return { e: false, message: `${title} создан!`, product: { uuid, title } };
   } catch (e) {
-    return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
+    return Boom.internal('Ошибка сохранения объявления в базе данных');
+    // { e: true, message: 'Ошибка сохранения объявления в базе данных' };
   }
 };
 
@@ -299,6 +283,7 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 
   const uuidUrlProduct = request.params.uuid as string;
   const uuidUserToken = request.auth.credentials.uuid as string;
+  console.log('uuidUrlProduct =>', uuidUrlProduct);
 
   if (!uuidUrlProduct) {
     return Boom.notFound('Такого объявления нет в Вашем аккаунте');
@@ -309,6 +294,7 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     .findOneBy(Product, { uuid: uuidUrlProduct, userUuid: uuidUserToken }).catch((e) => {
       Boom.notFound('Такого объявления нет в Вашем аккаунте');
     });
+  console.log(putProduct);
 
   if (!putProduct) {
     return Boom.notFound('Невозможно изменить объявления. Такого объявления нет в Вашем аккаунте');
@@ -360,7 +346,8 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     // return { e: false, message: `${title} создан!`, product: { uuid, title } };
     return { e: false, message: `${title} изменен! uuid: ${uuidUrlProduct} ====>`, product: { uuid, title } };
   } catch (e) {
-    return { e: true, message: 'Ошибка сохранения объявления в базе данных' };
+    return Boom.internal('Ошибка сохранения объявления в базе данных');
+    // { e: true, message: 'Ошибка сохранения объявления в базе данных' };
   }
 
   // return 'PUT';
@@ -387,7 +374,7 @@ const getTegs: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
 ) => {
-  console.log('поиск тегов');
+  // console.log('поиск тегов');
   try {
     const data = await db.manager.find(Tegs);
 
@@ -450,8 +437,20 @@ const userProducts: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
       sortTitle,
       search
     );
+    console.log(tegs);
+
+    const countProductReq = await getProguctCount(
+      tegs,
+      productNumberPang,
+      countProductOnPage,
+      userUuid,
+      sort,
+      sortTitle,
+      search
+    );
 
     return {
+      countProductReq,
       countProduct,
       countPage,
       countProductOnPage,

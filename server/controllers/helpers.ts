@@ -59,7 +59,7 @@ const writePhotoFile = async (photoUrl: Product['photoUrl'], file: photoHapiStri
       file.pipe(fs.createWriteStream(filePath));
     }
   }
-  console.log('старые урлы: /n', oldUrlPhoto, '/n', 'новые урлы: /n', photoPaths, '/n');
+  // console.log('старые урлы: /n', oldUrlPhoto, '/n', 'новые урлы: /n', photoPaths, '/n');
 
   // удаление старых фото
 
@@ -69,7 +69,7 @@ const writePhotoFile = async (photoUrl: Product['photoUrl'], file: photoHapiStri
       rm(path.join(config.fotofolder, pathPhoto), { force: true });
     }
 
-    console.log('старые урлы: /n', oldUrlPhoto, '/n', 'новые урлы: /n', photoPaths, '/n');
+    // console.log('старые урлы: /n', oldUrlPhoto, '/n', 'новые урлы: /n', photoPaths, '/n');
   }
 
   //   putProduct.photoUrl = JSON.stringify(photoPaths);

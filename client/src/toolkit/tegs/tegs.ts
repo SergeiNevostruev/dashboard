@@ -51,8 +51,42 @@ export const getProductData = createAsyncThunk(
       thunkAPI.dispatch(SetDataProductAction({data: productsDB}))
       return productsDB;
     }
+})
 
-
+export const getUserProductData = createAsyncThunk(
+  'tegs/getUserProductData', 
+  async (params: {token: string, tegs: string}, thunkAPI) => {
+    if (!params.token) return;
+    const store = thunkAPI.getState() as RootReducerType;
+    const url = store.auth.scope !== 'admin'? '/api/user-products':'api/products';
+    const search = store.tegs.searchProduct || '';
+    const pageNumber = store.tegs.userdatapage || 1;
+    if (!params.tegs) {
+      const productsDB: TegsReducerType = await PostRequest({ 
+        url, 
+        method: 'GET', 
+        data: {}, 
+        params: {
+          page: pageNumber,
+          count: store.tegs.count,
+          search
+        }, headers: { Authorization: `Bearer ${params.token}` }  });
+      thunkAPI.dispatch(SetDataUserProductAction({userdata: productsDB}))
+      return productsDB;
+    } else {
+      const productsDB: TegsReducerType = await PostRequest({ 
+        url, 
+        method: 'GET', 
+        data: {}, 
+        params: {
+          page: pageNumber,
+          tegs: params.tegs,
+          count: store.tegs.count,
+          search
+        }, headers: { Authorization: `Bearer ${params.token}` }});
+      thunkAPI.dispatch(SetDataUserProductAction({userdata: productsDB}))
+      return productsDB;
+    }
 })
 
 export const tegsSlice = createSlice({
@@ -61,22 +95,38 @@ export const tegsSlice = createSlice({
         loading: false,
         error: false,
         tegs: [] as TegsReducerType,
+        usertegs: '' as string,
         data: [] as any,
+        userdata: [] as any,
+        userdatapage: 1,
         count: 12,
-        searchPage: {1: '', 2: ''}
+        searchPage: {1: '', 2: ''},
+        searchProduct: ''
     },
     reducers: {
        SetTegsAction: (state, action) => {
         state.tegs = action.payload.tegs;
       },
+      SetTegsUserAction: (state, action) => {
+        state.usertegs = action.payload.usertegs;
+      },
       SetDataProductAction: (state, action) => {
         state.data = action.payload.data;
+      },
+      SetDataUserProductAction: (state, action) => {
+        state.userdata = action.payload.userdata;
+      },
+      SetDataUserProductPageAction: (state, action) => {
+        state.userdatapage = action.payload.userdatapage;
       },
       SetPageCountAction: (state, action) => {
         state.count = action.payload.count;
       },
       SetSearchPage: (state, action) => {
         state.searchPage = action.payload.searchPage ;
+      },
+      SetSearchUserProduct: (state, action) => {
+        state.searchProduct = action.payload.searchProduct ;
       },
     },
     extraReducers: (builder) => {
@@ -103,12 +153,23 @@ export const tegsSlice = createSlice({
             state.loading = false;
             state.data = action.payload;
       })
+      .addCase(getUserProductData.pending, (state)=>{
+        state.loading = true;
+      })
+      .addCase(getUserProductData.rejected, (state) => {
+            state.loading = false;
+            state.error = true;
+      })
+      .addCase(getUserProductData.fulfilled, (state, action) => {
+            state.loading = false;
+            state.userdata = action.payload;
+      })
     }
 });
 
 // export default tegsSlice;
 
-const {SetTegsAction, SetDataProductAction, SetPageCountAction, SetSearchPage } = tegsSlice.actions;
+const {SetTegsAction, SetDataProductAction, SetPageCountAction, SetSearchPage, SetDataUserProductAction, SetTegsUserAction, SetSearchUserProduct, SetDataUserProductPageAction } = tegsSlice.actions;
 
-export {SetTegsAction, SetDataProductAction, SetPageCountAction, SetSearchPage};
+export {SetTegsAction, SetDataProductAction, SetPageCountAction, SetSearchPage, SetDataUserProductAction, SetTegsUserAction, SetSearchUserProduct, SetDataUserProductPageAction };
 export default tegsSlice.reducer;

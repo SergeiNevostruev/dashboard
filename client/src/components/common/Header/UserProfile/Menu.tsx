@@ -17,10 +17,12 @@ const Menu = ({ admin }: { admin: boolean }) => {
         </div>
         <p>{name}</p>
       </Link>
-      <Link to="/ads" className={`${style.profile} ${style.border}`}>
-        <AdsIcon />
-        <p>Мои объявления</p>
-      </Link>
+      {!admin && (
+        <Link to="/admin" className={`${style.profile} ${style.border}`}>
+          <AdsIcon />
+          <p>Мои объявления</p>
+        </Link>
+      )}
       {admin && (
         <Link to="/admin" className={`${style.profile} ${style.border}`}>
           <AdminPanelIcon />

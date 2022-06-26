@@ -1,8 +1,8 @@
 import style from './AbsForm.module.scss';
 import { Form, Input, InputNumber, Button, Select, Upload, UploadProps, message } from 'antd';
 import { Map, Placemark, YMaps } from 'react-yandex-maps';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ChangeEvent, useEffect, useLayoutEffect, useState } from 'react';
 import { ValidateMessages } from 'rc-field-form/es/interface';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,16 +10,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 import PostRequest from '../../../network';
 import { GetUserToken } from '../../../toolkit/auth/selectors';
 import Spinner from '../../common/Spinner';
-
-const tegs = [
-  { id: '1', name: 'Автомобили' },
-  { id: '2', name: 'Аксессуары' },
-  { id: '3', name: 'Мебель' },
-  { id: '4', name: 'Одежда' },
-  { id: '5', name: 'Спорт' },
-  { id: '6', name: 'Техника' },
-  { id: '7', name: 'Товары для дома' },
-];
+import { getTegsData } from '../../../toolkit/tegs/tegs';
+import selectorTegStore from '../../../toolkit/tegs/selectors';
+import { CardPropsType } from '../MainPage/ProductCards';
 
 export interface NewProductType {
   title: string;
@@ -78,32 +71,51 @@ const AbsForm = ({
   //   funcRequest?: Function;
   defaultValue?: UuidProductType;
 }) => {
+  const tegsInStore = useSelector(selectorTegStore.GetTegsArray);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const userId = useParams();
+  const productId = useParams();
   const [titleValue, setTitleValue] = useState('');
   const token = useSelector(GetUserToken);
-  console.log(token);
+  const [data, SetData] = useState({} as CardPropsType);
+  const [changeData, SetchangeData] = useState(false);
+  const location = useLocation();
+  // console.log(token);
+  console.log(tegsInStore);
+
+  useLayoutEffect(() => {
+    if (tegsInStore) {
+      dispatch(getTegsData());
+    }
+  }, []);
 
   if (!token) {
     setTimeout(() => navigate('/auth'), 3000);
     return <Spinner />;
   }
-  console.log(userId);
 
-  const user: string = String(userId.id);
+  console.log(productId);
 
-  const initialValues = {
-    title: defaultValue?.title || 'Новое объявление',
-    tel: defaultValue?.tel || null,
-    teg: defaultValue?.teg || null,
-    price: defaultValue?.price || null,
-    about: defaultValue?.about || null,
-    address: defaultValue?.address || null,
-    mapXY: defaultValue?.mapXY || { x: null, y: null },
-    pathUrl: defaultValue?.pathUrl || null,
-  };
+  const product: string = String(productId.id);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const getData = async () => {
+      location.pathname = '';
+      const dataDB: CardPropsType = await PostRequest({ url: `/api/product/${product}`, method: 'GET' });
+      return dataDB;
+    };
+
+    getData()
+      .then((d) => {
+        SetData(d);
+        SetchangeData(true);
+        setTitleValue(data?.title);
+      })
+      .catch();
+  }, []);
+
   // let defaultFileList: Array<UploadFile<any>>;
   // if (initialValues.pathUrl) {
   //   defaultFileList = initialValues.pathUrl.map((v, i) => ({
@@ -123,49 +135,44 @@ const AbsForm = ({
   //   ];
   // }
 
-  // const [currentImage, setCurrentImage] = useState({});
-  // const addOrganizationImage = async ({ file }: any) => {
-  //   const reader = new FileReader();
-  //   reader.addEventListener('load', () => {
-  //     setCurrentImage({ imgVue: reader.result, imgBinary: file });
-  //   });
-  // };
   const onFinish = async (values: any) => {
-    // console.log(values);
-
-    const { product } = values;
+    const filds = values.product;
+    console.log('product---->', product);
 
     const url =
-      user === 'new' ? `${process.env.PUBLIC_URL}/api/newproduct` : `${process.env.PUBLIC_URL}/api/product/${user}`;
-    const method = user === 'new' ? 'POST' : 'PUT';
+      product === 'new'
+        ? `${process.env.PUBLIC_URL}/api/newproduct`
+        : `${process.env.PUBLIC_URL}/api/product/${product}`;
     const formData = new FormData();
-    formData.set('title', product.title);
-    formData.set('tel', product.tel);
-    formData.set('teg', (JSON.parse(product.tegs) as typeof tegs[number]).id);
-    formData.set('price', product.price);
-    formData.set('about', product.about);
-    formData.set('address', product.locality);
-    if (product.upload) formData.append('file', product.upload);
-    const options = {
-      url: url,
-      method: method,
-      data: formData,
-      headers: { ...axios.defaults.headers, Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
-    };
-    console.log(product.upload);
+    formData.set('title', filds.title);
+    formData.set('tel', filds.tel);
+    formData.set('teg', JSON.parse(filds.tegs).id);
+    formData.set('price', filds.price);
+    formData.set('about', filds.about);
+    formData.set('address', filds.locality);
+    if (filds.upload) {
+      for (let file of filds.upload) formData.append('file', file.originFileObj);
+    }
 
     try {
-      // const createOrChangeProductDB = await PostRequest(options);
-      const response = await axios.post(url, formData, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/form-data` },
-      });
+      let response;
+
+      if (product === 'new') {
+        response = await axios.post(url, formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/form-data` },
+        });
+      } else {
+        response = await axios.put(url, formData, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': `multipart/form-data` },
+        });
+      }
       const createOrChangeProductDB = response.data;
       console.log(response);
 
       if (!createOrChangeProductDB.e) {
         console.log('создан: ', createOrChangeProductDB);
         message.success(createOrChangeProductDB.message);
-        // navigate(`/cardproduct/${createOrChangeProductDB.product.uuid}`);
+        navigate(`/cardproduct/${createOrChangeProductDB.product.uuid}`);
       } else {
         message.warning('Проблемы с отправкой формы... \n', createOrChangeProductDB.message);
       }
@@ -176,13 +183,14 @@ const AbsForm = ({
     }
   };
 
-  console.log(userId);
+  console.log(productId);
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(`selected ${e}`);
     setTitleValue(e.target.value);
   };
+  console.log(data);
 
-  return (
+  return product === 'new' || changeData ? (
     <>
       <Form
         {...layout}
@@ -195,7 +203,7 @@ const AbsForm = ({
       >
         <Form.Item className={style.name_save_block_bgn}>
           <div className={style.name_save_block}>
-            <h1>{titleValue || initialValues.title}</h1>
+            <h1>{titleValue || data?.title || 'Новое объявление'}</h1>
             <Button type="primary" htmlType="submit" size="middle">
               Сохранить
             </Button>
@@ -206,25 +214,34 @@ const AbsForm = ({
             name={['product', 'title']}
             label="Название товара"
             rules={[{ required: true }]}
-            initialValue={initialValues.title}>
-            <Input defaultValue={'товар'} value={'товар'} onChange={onChange} />
+            initialValue={data?.title}>
+            <Input value={data?.title} onChange={onChange} />
           </Form.Item>
           <div className={style.form_group}>
             <Form.Item
               className={style.form_group_item}
               name={['product', 'tegs']}
               label="Категории"
-              initialValue={initialValues.teg}
+              initialValue={JSON.stringify(tegsInStore.find((v) => v.id === data?.teg))}
               rules={[{ required: true }]}>
               <Select
-                // onChange={onChange}
+                value={JSON.stringify(tegsInStore.find((v) => v.id === data?.teg))}
+                onChange={(value, option) => {
+                  if (!value) {
+                    option = {
+                      label: tegsInStore.find((v) => v.id === data?.teg)?.teg,
+                      value: JSON.stringify(tegsInStore.find((v) => v.id === data?.teg)),
+                    };
+                    value = JSON.stringify(tegsInStore.find((v) => v.id === data?.teg));
+                  }
+                }}
                 filterOption={(input, option) =>
                   (option!.children as unknown as string).toLowerCase().includes(input.toLowerCase())
                 }>
-                {tegs.map((v) => {
+                {tegsInStore.map((v) => {
                   return (
                     <Option key={v.id} value={JSON.stringify(v)}>
-                      {v.name}
+                      {v.teg}
                     </Option>
                   );
                 })}
@@ -235,25 +252,26 @@ const AbsForm = ({
               className={style.form_group_item}
               name={['product', 'price']}
               label="Стоимость"
-              initialValue={initialValues.price}
+              initialValue={data?.price}
               rules={[{ pattern: new RegExp(/^[0-9]+$/), required: true }]}>
-              <Input />
+              <Input value={data?.price} />
             </Form.Item>
           </div>
           <Form.Item
             name={['product', 'tel']}
             label="Телефон"
-            initialValue={initialValues.tel}
+            initialValue={data?.tel}
             rules={[{ pattern: new RegExp(/^[0-9]+$/), required: true }]}
             className={style.form_tel}>
-            <Input />
+            <Input value={data?.tel} />
           </Form.Item>
           <Form.Item
             name={['product', 'about']}
             label="Описание"
-            initialValue={initialValues.about}
+            initialValue={data?.about}
             rules={[{ required: true }]}>
             <Input.TextArea
+              value={data?.about}
               // showCount
               autoSize={{ minRows: 3, maxRows: 30 }}
               maxLength={3000}
@@ -267,17 +285,14 @@ const AbsForm = ({
             className={style.form_file_input_wrap}>
             <Upload
               name="upload"
-              // action="/upload.do"
               multiple
               // defaultFileList={defaultFileList}
               beforeUpload={(file, fileList) => {
                 // Access file content here and do something with it
                 console.log('before', file);
-
                 // Prevent upload
                 return false;
               }}
-              // defaultFileList={}
               onDownload={(file) => {
                 console.log(file);
               }}
@@ -285,9 +300,7 @@ const AbsForm = ({
                 setTimeout(() => {
                   console.log(onSuccess);
                 }, 1000);
-              }}
-              // customRequest={addOrganizationImage}
-            >
+              }}>
               <Button>Выбрать файл</Button>
             </Upload>
             {/* <Input type="file" multiple accept="image/*,image/jpeg" className={style.form_file_input} /> */}
@@ -296,8 +309,9 @@ const AbsForm = ({
             name={['product', 'locality']}
             label="Местоположение"
             rules={[{ required: true }]}
+            initialValue={data?.address}
             className={style.form_locality}>
-            <Input />
+            <Input value={data?.address} />
           </Form.Item>
         </div>
       </Form>
@@ -309,6 +323,8 @@ const AbsForm = ({
         </div>
       </YMaps>
     </>
+  ) : (
+    <Spinner />
   );
 };
 
