@@ -11,11 +11,15 @@ import ProductViewContainer from './containers/ProductViewContainer';
 import SearchContainer from './containers/SearchContainer';
 import AdminContainer from './containers/AdminContainer';
 import Profile from './components/pages/Profile';
+import { openNotification } from './components/common/StudyModal';
 
 const App = () => {
   console.log('APP => start');
 
-  useEffect(() => console.log('APP - MOUNT'), []);
+  useEffect(() => {
+    openNotification();
+    console.log('APP - MOUNT');
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<PageWrapper />}>
