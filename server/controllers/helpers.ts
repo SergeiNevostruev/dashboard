@@ -34,7 +34,7 @@ const writePhotoFile = async (photoUrl: Product['photoUrl'], file: photoHapiStri
   const photoPaths = [];
 
   if (file) {
-    console.log(file);
+    // console.log(file);
 
     if (file.length) {
       // eslint-disable-next-line no-plusplus

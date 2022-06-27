@@ -1,21 +1,12 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
-import ProductViewPage, { ProductViewPagePropType } from '../../components/pages/ProductViewPage';
-import { ReactImageGalleryItem } from 'react-image-gallery';
-import test_card from '../../assets/img/test_card.jpg';
-import test_card2 from '../../assets/img/test_card2.png';
-import defaultPhoto from '../../assets/img/default.jpg';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import ProductViewPage from '../../components/pages/ProductViewPage';
 import PostRequest from '../../network';
 import Spinner from '../../components/common/Spinner';
 import { useDispatch, useSelector } from 'react-redux';
 import selectorTegStore from '../../toolkit/tegs/selectors';
 import { CardPropsType } from '../../components/pages/MainPage/ProductCards';
 import { getProductData, getTegsData, SetSearchPage } from '../../toolkit/tegs/tegs';
-
-// const searchProduct: ProductViewPagePropType['searchProduct'] = [
-//   { id: '1', linkImg: test_card, name: 'Стиральная машина', firm: 'Indesit' },
-//   { id: '2', linkImg: test_card2, name: 'Стиральная машина', firm: 'Samsung' },
-// ];
 
 const ProductViewContainer = () => {
   const dispatch = useDispatch();
@@ -26,12 +17,10 @@ const ProductViewContainer = () => {
   const dataProductDB = dataProductInStore.data as CardPropsType[];
   const location = useLocation();
   location.pathname = '';
-  console.log(location.pathname);
   if (!localStorage.getItem('searchPage')) localStorage.setItem('searchPage', JSON.stringify(['', '']));
 
   const { id } = useParams();
   const [data, SetData] = useState({});
-  // if (id) localStorage.setItem('searchProduct', '');
 
   useEffect(() => {
     dispatch(getTegsData());
@@ -49,8 +38,6 @@ const ProductViewContainer = () => {
         SetData(d);
       })
       .catch();
-
-    // console.log(data);
   }, [id]);
 
   if (data) {

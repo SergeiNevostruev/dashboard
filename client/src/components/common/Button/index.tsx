@@ -1,4 +1,4 @@
-import React, { ReactChild, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import style from './Button.module.scss';
 
 type ButtonPropsType = {
@@ -60,9 +60,7 @@ const Button = ({
 
   return (
     <button
-      className={`${style.wrapper} ${switchColor(type)} ${switchSize(size)} ${
-        change && changeClass
-      } ${className}`}
+      className={`${style.wrapper} ${switchColor(type)} ${switchSize(size)} ${change && changeClass} ${className}`}
       onClick={Click}
       type="button">
       {children}

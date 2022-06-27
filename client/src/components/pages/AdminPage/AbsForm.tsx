@@ -1,12 +1,11 @@
 import style from './AbsForm.module.scss';
-import { Form, Input, InputNumber, Button, Select, Upload, UploadProps, message } from 'antd';
+import { Form, Input, Button, Select, Upload, message } from 'antd';
 import { Map, Placemark, YMaps } from 'react-yandex-maps';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ChangeEvent, useEffect, useLayoutEffect, useState } from 'react';
 import { ValidateMessages } from 'rc-field-form/es/interface';
-import { UploadFile } from 'antd/lib/upload/interface';
 import { useDispatch, useSelector } from 'react-redux';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import PostRequest from '../../../network';
 import { GetUserToken } from '../../../toolkit/auth/selectors';
 import Spinner from '../../common/Spinner';
@@ -31,16 +30,10 @@ interface UuidProductType extends NewProductType {
 const { Option } = Select;
 
 const normFile = (e: any) => {
-  // e.preventDefault();
-  // console.log('Upload event:', e);
   if (Array.isArray(e)) {
     return e;
   }
   return e?.fileList;
-};
-
-const onSearch = (value: string) => {
-  console.log('search:', value);
 };
 
 const layout = {
@@ -52,25 +45,10 @@ const layout = {
 const validateMessages: ValidateMessages = {
   required: '${label} обязательно!',
   pattern: { mismatch: 'В поле ${label} должно быть число!' },
-  // types: {
-  //   // email: '${label} is not a valid email!',
-  //   number: 'В поле ${label} должно быть число!',
-  // },
-  //   number: {
-  //     range: '${label} must be between ${min} and ${max}',
-  //   },
 };
 /* eslint-enable no-template-curly-in-string */
 
-const AbsForm = ({
-  // title,
-  // funcRequest,
-  defaultValue,
-}: {
-  //   title: string;
-  //   funcRequest?: Function;
-  defaultValue?: UuidProductType;
-}) => {
+const AbsForm = ({ defaultValue }: { defaultValue?: UuidProductType }) => {
   const tegsInStore = useSelector(selectorTegStore.GetTegsArray);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -81,9 +59,6 @@ const AbsForm = ({
   const [data, SetData] = useState({} as CardPropsType);
   const [changeData, SetchangeData] = useState(false);
   const location = useLocation();
-  // console.log(token);
-  console.log(tegsInStore);
-
   useLayoutEffect(() => {
     if (tegsInStore) {
       dispatch(getTegsData());
@@ -94,8 +69,6 @@ const AbsForm = ({
     setTimeout(() => navigate('/auth'), 3000);
     return <Spinner />;
   }
-
-  console.log(productId);
 
   const product: string = String(productId.id);
 
@@ -116,29 +89,8 @@ const AbsForm = ({
       .catch();
   }, []);
 
-  // let defaultFileList: Array<UploadFile<any>>;
-  // if (initialValues.pathUrl) {
-  //   defaultFileList = initialValues.pathUrl.map((v, i) => ({
-  //     uid: `${i}`,
-  //     name: [...v.split('/')].pop() || '',
-  //     status: 'done',
-  //     url: document.location.host + '/' + v,
-  //   }));
-  // } else {
-  //   defaultFileList = [
-  //     {
-  //       uid: '1',
-  //       name: 'Картинка',
-  //       status: 'done',
-  //       url: '/api/photo/223c2c50-328b-41e8-91b2-b8f7e9cbe0e5/1a9e595b-6bf9-4bb9-955b-3333c57a15dc.jpg',
-  //     },
-  //   ];
-  // }
-
   const onFinish = async (values: any) => {
     const filds = values.product;
-    console.log('product---->', product);
-
     const url =
       product === 'new'
         ? `${process.env.PUBLIC_URL}/api/newproduct`
@@ -167,28 +119,22 @@ const AbsForm = ({
         });
       }
       const createOrChangeProductDB = response.data;
-      console.log(response);
 
       if (!createOrChangeProductDB.e) {
-        console.log('создан: ', createOrChangeProductDB);
         message.success(createOrChangeProductDB.message);
         navigate(`/cardproduct/${createOrChangeProductDB.product.uuid}`);
       } else {
         message.warning('Проблемы с отправкой формы... \n', createOrChangeProductDB.message);
       }
     } catch (e) {
-      console.log('Ошибка', e);
       message.warning('Неведомая беда');
       // navigate('/404');
     }
   };
 
-  console.log(productId);
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(`selected ${e}`);
     setTitleValue(e.target.value);
   };
-  console.log(data);
 
   return product === 'new' || changeData ? (
     <>
@@ -289,12 +235,9 @@ const AbsForm = ({
               // defaultFileList={defaultFileList}
               beforeUpload={(file, fileList) => {
                 // Access file content here and do something with it
-                console.log('before', file);
+
                 // Prevent upload
                 return false;
-              }}
-              onDownload={(file) => {
-                console.log(file);
               }}
               customRequest={({ file, onSuccess, data }) => {
                 setTimeout(() => {

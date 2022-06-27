@@ -7,18 +7,11 @@ import defaultPhoto from './../../../assets/img/default.png';
 
 type RecProductPropsType = {
   searchProduct: string;
-  // {
-  //   id: string;
-  //   linkImg: string;
-  //   name: string;
-  //   firm: string;
-  // };
   className?: string;
 };
 
 const RecProduct = ({ searchProduct, className }: RecProductPropsType) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [data, SetData] = useState({});
 
   location.pathname = `/cardproduct/${searchProduct}`;
@@ -42,7 +35,6 @@ const RecProduct = ({ searchProduct, className }: RecProductPropsType) => {
 
     if (!!(data as CardPropsType).photoUrl && (data as CardPropsType).photoUrl !== '[]') {
       foto = `${process.env.PUBLIC_URL}/${JSON.parse((data as CardPropsType).photoUrl)[0]}`;
-      console.log(!![]);
     }
     const searchProductDB = {
       id: (data as CardPropsType).uuid,

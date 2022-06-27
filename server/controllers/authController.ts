@@ -46,7 +46,7 @@ const auth = async (request: Hapi.Request, reply: Hapi.ResponseApplicationState)
       lastName: dbuser.lastName,
     };
     if (scope === UserRole.ADMIN) result.scope = scope;
-    console.log(result.scope);
+    // console.log(result.scope);
 
     return result;
   } catch (e) {

@@ -3,7 +3,6 @@ import Eye from '../../../common/Eye';
 import style from './ProductCards.module.scss';
 import defaultPhoto from '../../../../assets/img/default.jpg';
 import { useSelector } from 'react-redux';
-import { SetTegsAction } from '../../../../toolkit/tegs/tegs';
 import selectorTegStore from '../../../../toolkit/tegs/selectors';
 
 export type CardPropsType = {
@@ -50,8 +49,6 @@ const Card = ({ uuid, title, about, photoUrl, price, date, views, teg }: CardPro
 };
 
 const ProductCards = ({ data }: DataPropsType) => {
-  // console.log('a');
-
   return !data ? (
     <svg className={style.spinner} viewBox="0 0 50 50">
       <circle className={style.path} cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
@@ -59,8 +56,6 @@ const ProductCards = ({ data }: DataPropsType) => {
   ) : (
     <div className={style.product_cards}>
       {data.map((v) => {
-        // console.log(JSON.parse(v.photoUrl));
-
         return (
           <Card
             uuid={v.uuid}

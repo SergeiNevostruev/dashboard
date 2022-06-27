@@ -124,7 +124,6 @@ const BackIcon = () => (
 
 const EyeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* <g clip-path="url(#clip0_3724_1161)"> */}
     <path
       d="M0.833374 10.0002C0.833374 10.0002 4.16671 3.3335 10 3.3335C15.8334 3.3335 19.1667 10.0002 19.1667 10.0002C19.1667 10.0002 15.8334 16.6668 10 16.6668C4.16671 16.6668 0.833374 10.0002 0.833374 10.0002Z"
       stroke="#2C2D2E"
@@ -139,13 +138,6 @@ const EyeIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    {/* </g> */}
-    {/* <rect x="0.5" y="0.5" width="19" height="19" stroke="#2C2D2E" stroke-opacity="0.08" /> */}
-    {/* <defs>
-      <clipPath id="clip0_3724_1161">
-        <rect width="20" height="20" fill="white" />
-      </clipPath>
-    </defs> */}
   </svg>
 );
 const EditIcon = () => (

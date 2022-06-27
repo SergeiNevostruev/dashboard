@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import GetUserName from '../../store/auth/selectors';
+import GetUserName from '../../toolkit/auth/selectors';
 
 const AuthHOC: React.FC = ({ children }) => {
   const isAuth = useSelector(GetUserName);

@@ -19,9 +19,7 @@ const RegistrationPage = () => {
   const [consent, setConsent] = useState(false);
 
   const regHandler = async () => {
-    console.log('регистрация');
     const response: responseRegType = await PostRequest({
-      // url: '/api/users',
       url: '/api/newuser',
       method: 'POST',
       data: {

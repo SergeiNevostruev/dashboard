@@ -16,20 +16,14 @@ const Slider = ({ images }: SliderPropType) => {
       showThumbnails={true}
       showFullscreenButton={false}
       disableSwipe={true}
-      // useTranslate3D={true}
-      // showGalleryFullscreenButton={true}
       showPlayButton={false}
-      // showGalleryPlayButton={false}
       showNav={false}
       isRTL={false}
       slideDuration={450}
       slideInterval={2000}
       slideOnThumbnailOver={true}
       thumbnailPosition={'bottom'}
-      // showVideo={false}
-      // useWindowKeyDown={false}
       additionalClass={style.slider}
-      // thumbnailClass={style.slider}
     />
   );
 };

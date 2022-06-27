@@ -16,14 +16,14 @@ type NewUserType = {
 const hello: any = (req: any, h: Hapi.ResponseToolkit) => ({ msg: 'Hello Dashboard', ip: req.location });
 
 const users: any = async () => {
-  console.log('поиск пользователей');
+  // console.log('поиск пользователей');
   try {
     const data = await db.manager.find(User);
-    console.log(data);
+    // console.log(data);
 
     return data;
   } catch (e) {
-    console.log('ошибка ', e);
+    // console.log('ошибка ', e);
     return { error: JSON.stringify(e) };
   }
 };

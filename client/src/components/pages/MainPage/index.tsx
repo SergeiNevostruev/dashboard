@@ -7,15 +7,8 @@ import testcard from '../../../assets/img/test_card.jpg';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import selectorTegStore from '../../../toolkit/tegs/selectors';
-import { TegsReducerType, TegType } from '../../../toolkit/tegs/types';
-import PostRequest from '../../../network';
-import {
-  getProductData,
-  getTegsData,
-  SetDataProductAction,
-  SetPageCountAction,
-  SetTegsAction,
-} from '../../../toolkit/tegs/tegs';
+import { TegType } from '../../../toolkit/tegs/types';
+import { getProductData, getTegsData, SetPageCountAction, SetTegsAction } from '../../../toolkit/tegs/tegs';
 import { useLocation } from 'react-router-dom';
 
 const data = [
@@ -99,7 +92,6 @@ const MainPage = () => {
   const countInStore = useSelector(selectorTegStore.GetProductCountOnMaimPage);
   const defaultCount = 6;
   const dataDB = dataInStore.data as CardPropsType[];
-  console.log('компонент');
 
   let location = useLocation();
 
@@ -112,10 +104,8 @@ const MainPage = () => {
     .filter((v) => v.change === true)
     .map((v) => v.id)
     .join(',');
-  console.log();
 
   const handleClick = () => {
-    console.log('Подгрузка данных');
     setSpinner(true);
     setTimeout(() => setSpinner(false), 3000);
     dispatch(SetPageCountAction({ count: countInStore + defaultCount }));

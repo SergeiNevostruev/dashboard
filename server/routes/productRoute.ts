@@ -89,7 +89,7 @@ const productRoute: Hapi.ServerRoute[] = [
 
   {
     method: 'POST',
-    path: '/api/newproduct', // Нужно разобраться как в свагере сделать форму
+    path: '/api/newproduct', // сделать форму в свагере
     options: {
       auth: { strategies: ['auth'], scope: ['user'] },
       payload: {

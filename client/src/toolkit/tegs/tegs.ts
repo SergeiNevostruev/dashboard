@@ -26,7 +26,7 @@ export const getProductData = createAsyncThunk(
     || store.tegs.tegs
     .map((v) => v.id)
     .join(',');  
-    console.log('теги',tegs);
+    // console.log('теги',tegs);
     if (!tegs) {
       const productsDB: TegsReducerType = await PostRequest({ 
         url: 'api/products', 

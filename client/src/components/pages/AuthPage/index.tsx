@@ -1,7 +1,7 @@
 import { message } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PostRequest from '../../../network';
 import { SetUserNameAction } from '../../../toolkit/auth/auth';
 import Button from '../../common/Button';

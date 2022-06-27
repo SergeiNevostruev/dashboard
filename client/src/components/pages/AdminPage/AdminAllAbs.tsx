@@ -1,34 +1,18 @@
-import { Link, Navigate, useHref, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useHref, useNavigate } from 'react-router-dom';
 import style from './AdminPage.module.scss';
 import { Pagination } from 'antd'; // стили для пангинации из ант библиотеки импортированы в main.css
 import { useDispatch, useSelector } from 'react-redux';
-import GetUserName from '../../../store/auth/selectors';
-import { ClearUserNameAction } from '../../../store/auth/actions';
-import { AdsIcon, PlusIcon } from '../../common/Icons';
+import { PlusIcon } from '../../common/Icons';
 import Button from '../../common/Button';
-import { useEffect } from 'react';
 import { Input, Space } from 'antd';
 import Filter from './Filter';
-import TableAds, { TablePropType } from './TableAbs';
+import TableAds from './TableAbs';
 import { getUserProductData, SetDataUserProductPageAction, SetSearchUserProduct } from '../../../toolkit/tegs/tegs';
 import { GetUserToken } from '../../../toolkit/auth/selectors';
 import selectorTegStore from '../../../toolkit/tegs/selectors';
 import Spinner from '../../common/Spinner';
 
 const { Search } = Input;
-
-type OneSearchProduct = {
-  id: string;
-  title: string;
-  about: string;
-  date: string;
-};
-
-// type SearchPagePropType = {
-//   data: OneSearchProduct[];
-//   count: number;
-// };
 
 const AdminAllAbs = ({ countProd }: { countProd: number }) => {
   const href = useHref('/admin/edit/new');
@@ -39,11 +23,8 @@ const AdminAllAbs = ({ countProd }: { countProd: number }) => {
   const dataUserDB = useSelector(selectorTegStore.GetMainUserProductArray);
   const count = dataUserDB.countProductReq;
   const countProductOnPage = dataUserDB.countProductOnPage || 6;
-  // console.log('count =>', count);
-
   const onSearch = (value: any) => {
     dispatch(SetSearchUserProduct({ searchProduct: value }));
-    console.log(value);
     if (token) dispatch(getUserProductData({ token, tegs }));
   };
 
@@ -61,7 +42,6 @@ const AdminAllAbs = ({ countProd }: { countProd: number }) => {
         </div>
         <Button
           onClick={() => {
-            console.log('добавить объявление');
             navigate(href);
           }}
           size="m"

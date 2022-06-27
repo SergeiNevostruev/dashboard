@@ -4,19 +4,22 @@ import * as Hapi from '@hapi/hapi';
 import 'colors';
 import { get } from 'node-emoji';
 import path from 'path';
+import dotenv from 'dotenv';
 import plugins from './plugins';
 import userRoute from '../routes/userRoute';
 import productRoute from '../routes/productRoute';
 import authController from '../controllers/authController';
 import config from '../config/config.json';
 
+dotenv.config();
+
 // server
 // =====================================================================================
 
 const init = async (): Promise<void> => {
   const server = Hapi.server({
-    port: 8080,
-    host: 'localhost',
+    port: process.env.SERVER_PORT,
+    host: process.env.HOST,
     routes: {
       files: {
         relativeTo: path.join(config.fotofolder)

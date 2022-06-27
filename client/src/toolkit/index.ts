@@ -2,7 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
 import authSlice from './auth/auth'; 
 import searchHeaderSlice from './searchHeader/searchHeader';
-import tegs, { getProductData } from './tegs/tegs';
+import tegs from './tegs/tegs';
 
 const rootReducer = combineReducers({
     auth: authSlice.reducer,

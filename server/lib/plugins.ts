@@ -26,9 +26,6 @@ const plugins: Array<Hapi.ServerRegisterPluginObject<any>> = [
     options: swaggerOptions
   },
   jwt,
-  // {
-  //   plugin: ip
-  // },
   ip
 ];
 

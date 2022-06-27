@@ -11,14 +11,8 @@ type TegsPropType = {
 };
 
 const Tegs = ({ tegs, onClick }: TegsPropType) => {
-  useEffect(() => {
-    console.log('рендер');
-  }, [tegs]);
-
   const handleClick = (id: TegType['id'] | 'all') => () => {
-    // isActive(id);
     onClick(id);
-    console.log(id);
   };
 
   return (

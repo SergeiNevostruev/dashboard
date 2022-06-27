@@ -33,7 +33,6 @@ const SearchPage = ({ data, count }: SearchPagePropType) => {
     );
   const changePage = (page: number, pageSize: number) => {
     dispatch(getDataSearchProductHeader({ search: state, page, count: pageSize }));
-    console.log(`page: ${page}, pageSize: ${pageSize}`);
   };
   return (
     <div className={style.container}>

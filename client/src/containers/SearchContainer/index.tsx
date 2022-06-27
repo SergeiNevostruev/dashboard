@@ -6,7 +6,6 @@ import { CardPropsType } from '../../components/pages/MainPage/ProductCards';
 import SearchPage from '../../components/pages/SearchPage';
 import { ClearSearchProductHeaderAction } from '../../toolkit/searchHeader/searchHeader';
 import { GetSearchHeaderData, GetSearchHeaderLoadind } from '../../toolkit/searchHeader/selectors';
-import fakeData from './fakedata';
 
 const SearchContainer = () => {
   const data = useSelector(GetSearchHeaderData);

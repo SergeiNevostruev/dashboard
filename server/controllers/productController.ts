@@ -234,7 +234,7 @@ const delProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   if (delProduct) {
     const { title } = delProduct;
     await db.manager.remove(delProduct);
-    console.log('Удален');
+    // console.log('Удален');
     return { e: false, message: `Объявление ${title} удалено` };
   }
   return Boom.notFound('Невозможно удалить. Такого объявления нет в Вашем аккаунте');
@@ -258,7 +258,7 @@ const adminDelProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   if (delProduct) {
     const { title } = delProduct;
     await db.manager.remove(delProduct);
-    console.log('Удален');
+    // console.log('Удален');
     return { e: false, message: `Объявление ${title} удалено` };
   }
   return Boom.notFound('Невозможно удалить. Такого объявления нет в Вашем аккаунте');
@@ -268,7 +268,7 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
   request: Hapi.Request,
   h: Hapi.ResponseToolkit
 ) => {
-  console.log(request.params.uuid, '  ', request.auth.credentials.uuid);
+  // console.log(request.params.uuid, '  ', request.auth.credentials.uuid);
   const {
     title,
     tel,
@@ -279,11 +279,11 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     mapXY,
     file
   } = request.payload as NewProductType;
-  console.log(request.payload);
+  // console.log(request.payload);
 
   const uuidUrlProduct = request.params.uuid as string;
   const uuidUserToken = request.auth.credentials.uuid as string;
-  console.log('uuidUrlProduct =>', uuidUrlProduct);
+  // console.log('uuidUrlProduct =>', uuidUrlProduct);
 
   if (!uuidUrlProduct) {
     return Boom.notFound('Такого объявления нет в Вашем аккаунте');
@@ -294,7 +294,7 @@ const putProduct: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     .findOneBy(Product, { uuid: uuidUrlProduct, userUuid: uuidUserToken }).catch((e) => {
       Boom.notFound('Такого объявления нет в Вашем аккаунте');
     });
-  console.log(putProduct);
+  // console.log(putProduct);
 
   if (!putProduct) {
     return Boom.notFound('Невозможно изменить объявления. Такого объявления нет в Вашем аккаунте');
@@ -364,7 +364,7 @@ const tegsdefoults: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
     await db.manager.save(tegs);
     return tegs;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
 
     return { e: true, message: 'Ошибка тега в базе данных' };
   }
@@ -380,7 +380,7 @@ const getTegs: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
 
     return data;
   } catch (e) {
-    console.log('ошибка ', e);
+    // console.log('ошибка ', e);
     return { error: JSON.stringify(e) };
   }
 };
@@ -437,7 +437,7 @@ const userProducts: Hapi.Lifecycle.Method | Hapi.HandlerDecorations = async (
       sortTitle,
       search
     );
-    console.log(tegs);
+    // console.log(tegs);
 
     const countProductReq = await getProguctCount(
       tegs,

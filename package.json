@@ -4,10 +4,12 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
     "client": "npm run start --prefix client",
     "server": "ts-node-dev server/main.ts",
-    "dev": "concurrently \"npm run start\" \"npm run client\""
+    "dev": "concurrently \"npm run start\" \"npm run client\"",
+    "migration_gen": "npx ts-node ./node_modules/typeorm/cli migration:generate server/migrations/${name} -d server/db.ts",
+    "migration_create": "npx ts-node ./node_modules/typeorm/cli migration:create server/migrations/${name}"
   },
   "author": "Nevostruev Sergei",
   "license": "ISC",
