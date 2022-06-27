@@ -24,8 +24,8 @@ export const defaultTegsCreate = async () => {
 
   // eslint-disable-next-line no-restricted-syntax
   for await (const teg of tegs) {
-    const tegs = new Tegs();
-    tegs.teg = teg;
+    const newteg = new Tegs();
+    newteg.teg = teg;
     db.manager.save(tegs).catch();
   }
   console.log('Теги созданы');

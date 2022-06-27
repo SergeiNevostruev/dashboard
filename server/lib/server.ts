@@ -18,8 +18,8 @@ dotenv.config();
 
 const init = async (): Promise<void> => {
   const server = Hapi.server({
-    port: process.env.SERVER_PORT,
-    host: process.env.HOST,
+    port: 8080,
+    host: 'localhost',
     routes: {
       files: {
         relativeTo: path.join(config.fotofolder)

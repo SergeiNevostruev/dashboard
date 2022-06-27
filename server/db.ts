@@ -15,10 +15,10 @@ const db = new DataSource(
     type: 'postgres',
     host: '0.0.0.0', // если разбито на контейнеры, то доступ по имени контейнера, если приложение снаружи, а база в контейнере, то через 0.0.0.0, если просто установлена, то локал хост
     port: 5432,
-    username: String(process.env.POSTGRES_USERNAME),
-    password: String(process.env.POSTGRES_PASSWORD),
-    database: String(process.env.POSTGRES_USERNAME),
-    synchronize: false,
+    username: 'postgres',
+    password: 'postgres',
+    database: 'postgres',
+    synchronize: true,
     logging: false,
     entities: [User, Product, Tegs,
       path.join(__dirname, 'entity/*.ts')

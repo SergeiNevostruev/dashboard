@@ -22,9 +22,23 @@ services:
   #   networks:
   #     - postgres-base-net
 
+  # db:
+  #   image: postgres:14.1-alpine
+  #   container_name: 'postgres1'
+  #   restart: always
+  #   # restart: on-failure
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   ports:
+  #     - '5432:5432'
+  #   networks:
+  #     - postgres-base-net
+
   db:
     image: postgres:14.1-alpine
-    container_name: 'postgres1'
+    container_name: 'postgres'
     restart: always
     # restart: on-failure
     environment:
