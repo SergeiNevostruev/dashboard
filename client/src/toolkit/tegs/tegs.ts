@@ -5,9 +5,9 @@ import { RootReducerType } from "../rootType";
 import { TegsReducerType } from "./types";
 
 export const getTegsData = createAsyncThunk('tegs/getTegsData', async (params, thunkAPI) => {
-    const tegsDB: TegsReducerType = await PostRequest({ url: '/api/tegs', method: 'GET' });
-    thunkAPI.dispatch(SetTegsAction({tegs: tegsDB}))
-    return tegsDB;
+    const tegsDB: TegsReducerType = await PostRequest({ url: '/api/tegs', method: 'GET' }).catch(() => console.log('ошибка сервера'));
+    thunkAPI.dispatch(SetTegsAction({tegs: tegsDB || [{id: 1, teg: 'Все товары' }]}))
+    return tegsDB || [{id: 1, teg: 'Все товары' }];
 })
 
 export const getProductData = createAsyncThunk(
@@ -15,8 +15,8 @@ export const getProductData = createAsyncThunk(
   async (params, thunkAPI) => {
     const store = thunkAPI.getState() as RootReducerType;
     if (!store.tegs.tegs) {
-      const tegsDB: TegsReducerType = await PostRequest({ url: '/api/tegs', method: 'GET' });
-      thunkAPI.dispatch(SetTegsAction({tegs: tegsDB}))
+      const tegsDB: TegsReducerType = await PostRequest({ url: '/api/tegs', method: 'GET' }).catch(() => console.log('ошибка сервера'));
+      thunkAPI.dispatch(SetTegsAction({tegs: tegsDB || [{id: 1, teg: 'Все товары' }]}))
     }
 
     const tegs = 
@@ -35,7 +35,7 @@ export const getProductData = createAsyncThunk(
         params: {
           page: 1,
           count: store.tegs.count
-        }  });
+        }  }).catch(() => console.log('ошибка сервера'));
       thunkAPI.dispatch(SetDataProductAction({data: productsDB}))
       return productsDB;
     } else {
@@ -47,7 +47,7 @@ export const getProductData = createAsyncThunk(
           page: 1,
           tegs,
           count: store.tegs.count
-        }  });
+        }  }).catch(() => console.log('ошибка сервера'));
       thunkAPI.dispatch(SetDataProductAction({data: productsDB}))
       return productsDB;
     }
@@ -70,7 +70,7 @@ export const getUserProductData = createAsyncThunk(
           page: pageNumber,
           count: store.tegs.count,
           search
-        }, headers: { Authorization: `Bearer ${params.token}` }  });
+        }, headers: { Authorization: `Bearer ${params.token}` }  }).catch(() => console.log('ошибка сервера'));;
       thunkAPI.dispatch(SetDataUserProductAction({userdata: productsDB}))
       return productsDB;
     } else {
@@ -83,7 +83,8 @@ export const getUserProductData = createAsyncThunk(
           tegs: params.tegs,
           count: store.tegs.count,
           search
-        }, headers: { Authorization: `Bearer ${params.token}` }});
+        }, headers: { Authorization: `Bearer ${params.token}` }}).catch(() => console.log('ошибка сервера'));
+        
       thunkAPI.dispatch(SetDataUserProductAction({userdata: productsDB}))
       return productsDB;
     }
@@ -94,7 +95,7 @@ export const tegsSlice = createSlice({
     initialState: {
         loading: false,
         error: false,
-        tegs: [] as TegsReducerType,
+        tegs: [{id: 1, teg: 'Все товары' }] as TegsReducerType,
         usertegs: '' as string,
         data: [] as any,
         userdata: [] as any,

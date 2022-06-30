@@ -6,7 +6,7 @@ import { User, UserRole } from '../entity/User';
 
 export const defaultTegsCreate = async () => {
   console.log('создание тегов');
-  const tegs = [
+  const tegsArr = [
     'Автомобили',
     'Аксессуары',
     'Мебель',
@@ -23,10 +23,10 @@ export const defaultTegsCreate = async () => {
   }
 
   // eslint-disable-next-line no-restricted-syntax
-  for await (const teg of tegs) {
+  for await (const teg of tegsArr) {
     const newteg = new Tegs();
     newteg.teg = teg;
-    db.manager.save(tegs).catch();
+    db.manager.save(newteg).catch();
   }
   console.log('Теги созданы');
 

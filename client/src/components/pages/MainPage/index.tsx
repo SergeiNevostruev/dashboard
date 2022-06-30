@@ -10,6 +10,7 @@ import selectorTegStore from '../../../toolkit/tegs/selectors';
 import { TegType } from '../../../toolkit/tegs/types';
 import { getProductData, getTegsData, SetPageCountAction, SetTegsAction } from '../../../toolkit/tegs/tegs';
 import { useLocation } from 'react-router-dom';
+import Spinner from '../../common/Spinner';
 
 const data = [
   {
@@ -91,7 +92,14 @@ const MainPage = () => {
   const dataInStore = useSelector(selectorTegStore.GetMainProductArray);
   const countInStore = useSelector(selectorTegStore.GetProductCountOnMaimPage);
   const defaultCount = 6;
-  const dataDB = dataInStore.data as CardPropsType[];
+
+  useLayoutEffect(() => {
+    if (tegsInStore) {
+      dispatch(getTegsData());
+      dispatch(getProductData());
+      dispatch(SetPageCountAction({ count: defaultCount }));
+    }
+  }, []);
 
   let location = useLocation();
 
@@ -100,10 +108,8 @@ const MainPage = () => {
     dispatch(getProductData());
   }, [location]);
 
-  const tegsParam = tegsInStore
-    .filter((v) => v.change === true)
-    .map((v) => v.id)
-    .join(',');
+  const dataDB = dataInStore.data as CardPropsType[];
+  if (!dataDB) return <Spinner />;
 
   const handleClick = () => {
     setSpinner(true);
@@ -132,13 +138,6 @@ const MainPage = () => {
     dispatch(getProductData());
   };
 
-  useLayoutEffect(() => {
-    if (tegsInStore) {
-      dispatch(getTegsData());
-      dispatch(getProductData());
-      dispatch(SetPageCountAction({ count: defaultCount }));
-    }
-  }, []);
   return (
     <>
       <TopBlock />
